@@ -22,4 +22,8 @@ RUN wget https://launcher.mojang.com/mc/game/1.13.1/client/8de235e5ec3a7fce16805
 RUN mkdir /tmp/world
 RUN mkdir /tmp/export
 RUN mkdir /tmp/config
+
+RUN useradd -ms /bin/bash bob
+USER bob
+
 ENTRYPOINT ["/bin/bash", "-c","/tmp/overviewer/overviewer.py --config=/tmp/config/config.py"]
