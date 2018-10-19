@@ -3,7 +3,6 @@
 worlds["pudel"] = "/tmp/world/"
 texturepath = "/tmp/overviewer/client.jar"
 outputdir = "/tmp/export/"
-minzoom = 4
 
 def playerIcons(poi):
     if poi['id'] == 'Player':
