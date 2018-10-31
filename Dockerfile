@@ -13,11 +13,10 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir /tmp/overviewer
 WORKDIR /tmp/overviewer
 
-RUN git clone https://github.com/gmcnew/Minecraft-Overviewer.git .
-RUN git checkout minecraft113
+COPY COPY/Minecraft-Overviewer-minecraft113-fixed /tmp/overviewer
 RUN python2 setup.py build
 
-RUN wget https://launcher.mojang.com/mc/game/1.13.1/client/8de235e5ec3a7fce168056ea395d21cbdec18d7c/client.jar
+COPY COPY/client.jar /tmp/overviewer
 
 RUN mkdir /tmp/world
 RUN mkdir /tmp/export
