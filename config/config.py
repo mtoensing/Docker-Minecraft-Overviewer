@@ -3,6 +3,8 @@ worlds["pudel"] = "/tmp/world/"
 texturepath = "/tmp/overviewer/client.jar"
 outputdir = "/tmp/export/"
 
+defaultzoom = 3
+
 my_cave = [Base(), EdgeLines(), Cave(only_lit=True), DepthTinting()]
 
 renders["day"] = {
