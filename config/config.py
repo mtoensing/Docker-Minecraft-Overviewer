@@ -2,10 +2,9 @@
 worlds["pudel"] = "/tmp/world/"
 texturepath = "/tmp/overviewer/client.jar"
 outputdir = "/tmp/export/"
-
-defaultzoom = 3
-
 my_cave = [Base(), EdgeLines(), Cave(only_lit=True), DepthTinting()]
+my_nowater = [Base(), EdgeLines(), NoFluids()]
+defaultzoom = 5
 
 renders["day"] = {
     'world': 'pudel',
@@ -15,7 +14,6 @@ renders["day"] = {
     'crop': (-1200, -1600, 900, 400)
 }
 
-"""
 renders["night"] = {
     'world': 'pudel',
     'title': 'Night',
@@ -31,4 +29,20 @@ renders["cave"] = {
     "dimension": "overworld",
     'crop': (-1200, -1600, 900, 400)
 }
-"""
+
+renders["nowater"] = {
+    'world': 'pudel',
+    'title': 'No water',
+    'rendermode': my_nowater,
+    "dimension": "overworld",
+    'crop': (-1200, -1600, 900, 400)
+}
+
+renders["day_r"] = {
+    'world': 'pudel',
+    'title': 'Day upside-down',
+    'rendermode': 'smooth_lighting',
+    "dimension": "overworld",
+    "northdirection" : "lower-right",
+    'crop': (-1200, -1600, 900, 400)
+}
