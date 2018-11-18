@@ -6,13 +6,25 @@ my_cave = [Base(), EdgeLines(), Cave(only_lit=True), DepthTinting()]
 my_nowater = [Base(), EdgeLines(), NoFluids()]
 defaultzoom = 5
 
+def playerIcons(poi):
+    if poi['id'] == 'Player':
+        poi['icon'] = "https://mc.marc.tv/assets/steve.png"
+        return "Last known location for %s" % poi['EntityId']
+
+thingsToMaker = [
+    dict(name="Players", filterFunction=playerIcons),
+]
+
 renders["day"] = {
     'world': 'pudel',
     'title': 'Day',
     'rendermode': 'smooth_lighting',
     "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400)
+    'crop': (-1200, -1600, 900, 400),
+    'markers': thingsToMaker
 }
+
+'''
 
 renders["night"] = {
     'world': 'pudel',
@@ -46,3 +58,4 @@ renders["day_r"] = {
     "northdirection" : "lower-right",
     'crop': (-1200, -1600, 900, 400)
 }
+'''
