@@ -24,14 +24,13 @@ renders["day"] = {
     'markers': thingsToMaker
 }
 
-'''
-
 renders["night"] = {
     'world': 'pudel',
     'title': 'Night',
     'rendermode': 'smooth_night',
     "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400)
+    'crop': (-1200, -1600, 900, 400),
+    'markers': thingsToMaker
 }
 
 renders["cave"] = {
@@ -39,9 +38,10 @@ renders["cave"] = {
     'title': 'Cave',
     'rendermode': my_cave,
     "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400)
+    'crop': (-1200, -1600, 900, 400),
+    'markers': thingsToMaker
 }
-
+'''
 renders["nowater"] = {
     'world': 'pudel',
     'title': 'No water',
