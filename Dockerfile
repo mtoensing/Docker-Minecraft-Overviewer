@@ -14,6 +14,7 @@ RUN mkdir /tmp/overviewer
 WORKDIR /tmp/overviewer
 
 COPY COPY/Minecraft-Overviewer-minecraft113-fixed /tmp/overviewer
+COPY COPY/Minecraft-Overviewer-minecraft113-fixed/overviewer_core/aux_files/genPOI.py /tmp/overviewer
 RUN python2 setup.py build
 
 COPY COPY/client.jar /tmp/overviewer

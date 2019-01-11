@@ -116,7 +116,7 @@ def parseBucketChunks((bucket, rset, filters)):
     for b in bucket:
         try:
             data = rset.get_chunk(b[0],b[1])
-            for poi in itertools.chain(data['TileEntities'], data['Entities']):
+            for poi in itertools.chain(data.get('TileEntities', []), data.get('Entities', [])):
                 if poi['id'] == 'Sign' or poi['id'] == 'minecraft:sign':
                     poi = signWrangler(poi)
                 for name, filter_function in filters:
@@ -127,6 +127,8 @@ def parseBucketChunks((bucket, rset, filters)):
                         markers[name].append(d)
         except nbt.CorruptChunkError:
             logging.warning("Ignoring POIs in corrupt chunk %d,%d", b[0], b[1])
+        except world.ChunkDoesntExist:
+            pass
 
         # Perhaps only on verbose ?
         i = i + 1

@@ -18,21 +18,21 @@ thingsToMaker = [
 renders["day"] = {
     'world': 'pudel',
     'title': 'Day',
-    'rendermode': 'smooth_lighting',
+    'rendermode': 'normal',
     "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400),
+    'crop': (-200, -600, -100, -500),
     'markers': thingsToMaker
 }
 
 renders["night"] = {
     'world': 'pudel',
     'title': 'Night',
-    'rendermode': 'smooth_night',
+    'rendermode': 'night',
     "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400),
+    'crop': (-200, -600, -100, -500),
     'markers': thingsToMaker
 }
-
+'''
 renders["cave"] = {
     'world': 'pudel',
     'title': 'Cave',
@@ -41,7 +41,7 @@ renders["cave"] = {
     'crop': (-1200, -1600, 900, 400),
     'markers': thingsToMaker
 }
-'''
+
 renders["nowater"] = {
     'world': 'pudel',
     'title': 'No water',
