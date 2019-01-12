@@ -15,24 +15,25 @@ thingsToMaker = [
     dict(name="Players", filterFunction=playerIcons),
 ]
 
-renders["day"] = {
+renders["day_normal"] = {
     'world': 'pudel',
     'title': 'Day',
     'rendermode': 'normal',
     "dimension": "overworld",
-    'crop': (-200, -600, -100, -500),
+    'crop': (-1200, -1600, 900, 400),
     'markers': thingsToMaker
 }
 
-renders["night"] = {
+
+renders["night_normal"] = {
     'world': 'pudel',
     'title': 'Night',
     'rendermode': 'night',
     "dimension": "overworld",
-    'crop': (-200, -600, -100, -500),
+    'crop': (-1200, -1600, 900, 400),
     'markers': thingsToMaker
 }
-'''
+
 renders["cave"] = {
     'world': 'pudel',
     'title': 'Cave',
@@ -40,6 +41,40 @@ renders["cave"] = {
     "dimension": "overworld",
     'crop': (-1200, -1600, 900, 400),
     'markers': thingsToMaker
+}
+'''
+renders["nether"] = {
+    'world': 'pudel',
+    'title': 'Nether',
+    'rendermode': "nether",
+    "dimension": "nether",
+    'crop': (-300, -300, 300, 300),
+    'markers': thingsToMaker
+}
+
+renders["night"] = {
+    'world': 'pudel',
+    'title': 'Night',
+    'rendermode': 'smooth_night',
+    "dimension": "overworld",
+    'crop': (-1200, -1600, 900, 400),
+    'markers': thingsToMaker
+}
+
+renders["day"] = {
+    'world': 'pudel',
+    'title': 'Day',
+    'rendermode': 'smooth_lighting',
+    "dimension": "overworld",
+    'crop': (-1200, -1600, 900, 400),
+    'markers': thingsToMaker
+}
+
+renders["complete"] = {
+    'world': 'pudel',
+    'title': 'no borders',
+    'rendermode': 'normal',
+    "dimension": "overworld",
 }
 
 renders["nowater"] = {
