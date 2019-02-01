@@ -6,14 +6,30 @@ texturepath = "/tmp/overviewer/client.jar"
 outputdir = "/tmp/export/"
 my_cave = [Base(), EdgeLines(), Cave(only_lit=True), DepthTinting()]
 my_nowater = [Base(), EdgeLines(), NoFluids()]
+my_crop = (-200, -600, -100, -500)
 
 def playerIcons(poi):
     if poi['id'] == 'Player':
         poi['icon'] = "https://mc.marc.tv/assets/steve.png"
         return "Last known location for %s" % poi['EntityId']
 
+def playerSpawns(poi):
+    if poi['id']=='PlayerSpawn':
+        poi['icon'] = "https://mc.marc.tv/assets/bed.png"
+        return "Spawn for %s" % poi['EntityId']
+
+def signFilter(poi):
+    if poi['id'] == 'Sign':
+        return "\n".join([poi['Text1'], poi['Text2'], poi['Text3'], poi['Text4']])
+
+def chestFilter(poi):
+    if poi['id'] == 'Chest':
+        return "Chest with %d items" % len(poi['Items'])
+
+
 thingsToMaker = [
     dict(name="Players", filterFunction=playerIcons),
+    dict(name="PlayerSpawn", filterFunction=playerSpawns),
 ]
 
 renders["day"] = {
@@ -21,25 +37,36 @@ renders["day"] = {
     'title': 'Day',
     'rendermode': 'normal',
     "dimension": "overworld",
-    'crop': (-200, -600, -100, -500),
+    'crop': my_crop,
     'markers': thingsToMaker
 }
+
+renders["day_r"] = {
+    'world': 'pudel',
+    'title': 'Day Reversed',
+    'rendermode': 'normal',
+    "dimension": "overworld",
+    'crop': my_crop,
+    'northdirection': "lower-right",
+    'markers': thingsToMaker
+}
+
 
 renders["day_lighting"] = {
     'world': 'pudel',
     'title': 'Day Lighting',
     'rendermode': 'lighting',
     "dimension": "overworld",
-    'crop': (-200, -600, -100, -500),
+    'crop': my_crop,
     'markers': thingsToMaker
 }
 
 renders["day_nowater"] = {
     'world': 'pudel',
-    'title': 'Day Lighting',
+    'title': 'Day No Water',
     'rendermode': my_nowater,
     "dimension": "overworld",
-    'crop': (-200, -600, -100, -500),
+    'crop': my_crop,
     'markers': thingsToMaker
 }
 
@@ -48,7 +75,7 @@ renders["night"] = {
     'title': 'Night',
     'rendermode': 'night',
     "dimension": "overworld",
-    'crop': (-200, -600, -100, -500),
+    'crop': my_crop,
     'markers': thingsToMaker
 }
 
@@ -57,7 +84,7 @@ renders["night_smooth"] = {
     'title': 'Night Smooth',
     'rendermode': 'smooth_night',
     "dimension": "overworld",
-    'crop': (-200, -600, -100, -500),
+    'crop': my_crop,
     'markers': thingsToMaker
 }
 
@@ -66,7 +93,7 @@ renders["cave"] = {
     'title': 'Cave',
     'rendermode': my_cave,
     "dimension": "overworld",
-    'crop': (-200, -600, -100, -500),
+    'crop': my_crop,
     'markers': thingsToMaker
 }
 
@@ -81,8 +108,8 @@ renders["rails"] = {
                     (((0, 0, 0, 27), (0, -1, 0, 4)), (0,   255, 0, 255)),
                     (((0, 0, 0, 28), (0, -1, 0, 4)), (255, 255, 0, 255))
             ]), EdgeLines()],
-    "overlay": ["night", "day","night_smooth","day_lighting"],
-    'crop': (-200, -600, -100, -500)
+    "overlay": ["night", "day","night_smooth","day_lighting","day_nowater"],
+    'crop': my_crop,
 }
 
 renders["nether"] = {

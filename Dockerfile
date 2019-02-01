@@ -26,4 +26,4 @@ RUN mkdir /tmp/config
 RUN useradd -ms /bin/bash bob
 USER bob
 
-ENTRYPOINT ["/bin/bash", "-c","/tmp/overviewer/overviewer.py --config=/tmp/config/config.py && /tmp/overviewer/genPOI.py --config=/tmp/config/config.py --skip-scan"]
+ENTRYPOINT ["/bin/bash", "-c","/tmp/overviewer/overviewer.py --config=/tmp/config/config.py && /tmp/overviewer/overviewer.py --config=/tmp/config/config.py --genpoi"]
