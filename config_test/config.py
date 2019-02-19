@@ -20,6 +20,7 @@ def playerSpawns(poi):
 
 def signFilter(poi):
     if poi['id'] == 'Sign':
+        poi['icon'] = "https://mc.marc.tv/assets/sign.png"
         return "\n".join([poi['Text1'], poi['Text2'], poi['Text3'], poi['Text4']])
 
 def chestFilter(poi):
@@ -29,7 +30,8 @@ def chestFilter(poi):
 
 thingsToMaker = [
     dict(name="Players", filterFunction=playerIcons),
-    dict(name="PlayerSpawn", filterFunction=playerSpawns),
+    dict(name="Beds", filterFunction=playerSpawns),
+    dict(name="Signs", filterFunction=signFilter),
 ]
 
 renders["day"] = {
@@ -119,3 +121,15 @@ renders["nether"] = {
     "dimension": "nether",
     'crop': (-200, -200, 200, 200),
 }
+
+# Import the Observers
+from observer import MultiplexingObserver, ProgressBarObserver, JSObserver
+
+# Construct the ProgressBarObserver
+ProgressBarObserver = ProgressBarObserver()
+
+# Construct a basic JSObserver
+jsObserver = JSObserver(outputdir, 30)
+
+# Set the observer to a MultiplexingObserver
+observer = MultiplexingObserver(ProgressBarObserver, jsObserver)
