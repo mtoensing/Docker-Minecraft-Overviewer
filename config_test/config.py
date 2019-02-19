@@ -30,8 +30,7 @@ def chestFilter(poi):
 
 thingsToMaker = [
     dict(name="Players", filterFunction=playerIcons),
-    dict(name="Beds", filterFunction=playerSpawns),
-    dict(name="Signs", filterFunction=signFilter),
+    dict(name="Beds", filterFunction=playerSpawns)
 ]
 
 renders["day"] = {

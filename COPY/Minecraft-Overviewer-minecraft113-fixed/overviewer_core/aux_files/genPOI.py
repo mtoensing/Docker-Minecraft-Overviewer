@@ -92,7 +92,7 @@ def jsonText(s):
 bucketChunkFuncs = {}
 def initBucketChunks(config_path):
     global bucketChunkFuncs
-
+    
     mw_parser = configParser.MultiWorldParser()
     mw_parser.parse(config_path)
     # ought not to fail since we already did it once
@@ -181,18 +181,18 @@ def handleEntities(rset, config, config_path, filters, markers):
                 # iterate_chunks() doesn't inspect chunks and filter out
                 # placeholder ones. It's okay for this chunk to not exist.
                 pass
-
+  
     else:
         buckets = [[] for i in range(numbuckets)];
-
+  
         for (x, z, mtime) in rset.iterate_chunks():
             i = x / 32 + z / 32
-            i = i % numbuckets
+            i = i % numbuckets 
             buckets[i].append([x, z])
-
+  
         for b in buckets:
             logging.info("Buckets has %d entries", len(b));
-
+  
         # Create a pool of processes and run all the functions
         pool = Pool(processes=numbuckets, initializer=initBucketChunks, initargs=(config_path,))
 
@@ -200,9 +200,9 @@ def handleEntities(rset, config, config_path, filters, markers):
         filters = [(name, filter_function.__name__) for name, __, filter_function, __, __, __ in filters]
 
         results = pool.map(parseBucketChunks, ((buck, rset, filters) for buck in buckets))
-
+  
         logging.info("All the threads completed")
-
+  
         for marker_dict in results:
             for name, marker_list in marker_dict.iteritems():
                 markers[name]['raw'].extend(marker_list)
@@ -214,7 +214,7 @@ class PlayerDict(dict):
     use_uuid = False
     _name = ''
     uuid_cache = None # A cache for the UUID->profile lookups
-
+    
     @classmethod
     def load_cache(cls, outputdir):
         cache_file = os.path.join(outputdir, "uuidcache.dat")
@@ -257,7 +257,7 @@ class PlayerDict(dict):
                     super(PlayerDict, self).__setitem__("EntityId", self.get_name_from_uuid())
                 else:
                     super(PlayerDict, self).__setitem__("EntityId", self._name)
-
+        
         return super(PlayerDict, self).__getitem__(item)
 
     def get_name_from_uuid(self):
@@ -507,8 +507,8 @@ def main():
 
             # add an entry in the menu to show markers found by this filter
             group = dict(groupName=name,
-                    displayName = f['name'],
-                    icon=f.get('icon', 'signpost_icon.png'),
+                    displayName = f['name'], 
+                    icon=f.get('icon', 'signpost_icon.png'), 
                     createInfoWindow=f.get('createInfoWindow', True),
                     checked = f.get('checked', False))
             marker_groups[rname].append(group)
