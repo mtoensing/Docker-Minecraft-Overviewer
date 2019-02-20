@@ -34,6 +34,7 @@ thingsToMaker = [
 ]
 
 renders["day"] = {
+    'forcerender': True,
     'world': 'pudel',
     'title': 'Day',
     'rendermode': 'normal',
@@ -41,7 +42,7 @@ renders["day"] = {
     'crop': my_crop,
     'markers': thingsToMaker
 }
-
+'''
 renders["day_r"] = {
     'world': 'pudel',
     'title': 'Day Reversed',
@@ -120,6 +121,7 @@ renders["nether"] = {
     "dimension": "nether",
     'crop': (-200, -200, 200, 200),
 }
+'''
 
 # Import the Observers
 from observer import MultiplexingObserver, ProgressBarObserver, JSObserver
