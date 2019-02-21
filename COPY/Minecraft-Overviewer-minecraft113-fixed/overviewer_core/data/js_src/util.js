@@ -267,6 +267,12 @@ overviewer.util = {
                         [],
                         ovconf.marker_groups, {collapsed: false}).addTo(overviewer.map);
             }
+            for (var marker_group in ovconf.marker_groups) {
+                var mg = ovconf.marker_groups[marker_group];
+                if (mg.options.default_checked) {
+                    mg.addTo(overviewer.map);
+                }
+            }
 
             overviewer.util.updateHash();
         });
@@ -334,8 +340,8 @@ overviewer.util = {
                     for (var mkidx = 0; mkidx < markers[obj.path].length; mkidx++) {
                         var marker_group = new L.layerGroup();
                         var marker_entry = markers[obj.path][mkidx];
-                        var icon =  L.icon({iconUrl: marker_entry.icon,
-                                            className: "ov-marker"});
+                        L.Util.setOptions(marker_group, {default_checked: marker_entry.checked});
+                        var icon =  L.divIcon({html: `<img class="ov-marker" src="${marker_entry.icon}">`});
                         console.log("marker group:", marker_entry.displayName, marker_entry.groupName);
 
                         for (var dbidx = 0; dbidx < markersDB[marker_entry.groupName].raw.length; dbidx++) {
@@ -343,8 +349,7 @@ overviewer.util = {
                             var latlng = overviewer.util.fromWorldToLatLng(db.x, db.y, db.z, obj);
                             var m_icon;
                             if (db.icon != undefined) {
-                                m_icon = L.icon({iconUrl: db.icon,
-                                                 className: "ov-marker"});
+                                m_icon = L.divIcon({html: `<img class="ov-marker" src="${db.icon}">`});
                             } else {
                                 m_icon = icon;
                             }
