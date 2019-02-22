@@ -305,6 +305,7 @@ class RegionSet(object):
             'minecraft:coarse_dirt': (3, 1),
             'minecraft:podzol': (3, 2),
             'minecraft:cobblestone': (4, 0),
+            'minecraft:infested_cobblestone': (4, 0),
             'minecraft:oak_planks': (5, 0),
             'minecraft:spruce_planks': (5, 1),
             'minecraft:birch_planks': (5, 2),
@@ -345,7 +346,7 @@ class RegionSet(object):
             'minecraft:sandstone': (24, 0),
             'minecraft:cut_sandstone': (24, 2),
             'minecraft:chiseled_sandstone': (24, 3),
-
+            'minecraft:note_block': (25, 0),
             'minecraft:white_bed': (26, 0),
             'minecraft:orange_bed': (26, 0),
             'minecraft:magenta_bed': (26, 0),
@@ -427,9 +428,9 @@ class RegionSet(object):
             'minecraft:wheat': (59, 0),
             'minecraft:farmland': (60, 0),
             'minecraft:furnace': (61, 0),
-            'minecraft:standing_sign': (63, 0),
+            'minecraft:sign': (63, 0),
             'minecraft:oak_door': (64, 0),
-            'minecraft:ladder': (65, 0), # todo: incorporate facing
+            'minecraft:ladder': (65, 0),
             'minecraft:rail': (66, 0),
             'minecraft:stone_stairs': (67, 0),
             'minecraft:cobblestone_stairs': (67, 0),
@@ -459,22 +460,21 @@ class RegionSet(object):
             'minecraft:cake': (92, 0),
             'minecraft:repeater': (93,0),
             'minecraft:oak_trapdoor': (96, 0),
-            'minecraft:spruce_trapdoor': (96, 0), #wrong
-            'minecraft:birch_trapdoor': (96, 0),
-            'minecraft:jungle_trapdoor': (96, 0),
-            'minecraft:acacia_trapdoor': (96, 0),
-            'minecraft:dark_oak_trapdoor': (96, 0),
             'minecraft:infested_stone': (97, 0),
             'minecraft:stone_bricks': (98, 0),
             'minecraft:infested_stone_bricks': (98, 0),
             'minecraft:mossy_stone_bricks': (98, 1),
+            'minecraft:infested_mossy_stone_bricks': (98, 1),
             'minecraft:cracked_stone_bricks': (98, 2),
+            'minecraft:infested_cracked_stone_bricks': (98, 2),
             'minecraft:chiseled_stone_bricks': (98, 3),
             'minecraft:infested_chiseled_stone_bricks': (98, 3),
             'minecraft:brown_mushroom_block': (99, 0),
             'minecraft:red_mushroom_block': (100, 0),
+            'minecraft:mushroom_stem': (100,10),
             'minecraft:iron_bars': (101, 0),
             'minecraft:glass_pane': (102, 0),
+            'minecraft:melon': (103,0),
             'minecraft:attached_pumpkin_stem': (104, 0),
             'minecraft:attached_melon_stem': (104, 0),
             'minecraft:pumpkin_stem': (105, 0),
@@ -518,6 +518,27 @@ class RegionSet(object):
             'minecraft:mossy_cobblestone': (139, 16),
             'minecraft:cobblestone_wall': (139, 0),
             'minecraft:flower_pot': (140, 0),
+            'minecraft:potted_poppy': (140, 0),  # Pots not rendering
+            'minecraft:potted_blue_orchid': (140, 0),
+            'minecraft:potted_allium': (140, 0),
+            'minecraft:potted_azure_bluet': (140, 0),
+            'minecraft:potted_red_tulip': (140, 0),
+            'minecraft:potted_orange_tulip': (140, 0),
+            'minecraft:potted_white_tulip': (140, 0),
+            'minecraft:potted_pink_tulip': (140, 0),
+            'minecraft:potted_oxeye_daisy': (140, 0),
+            'minecraft:potted_oak_sapling': (140, 0),
+            'minecraft:potted_spruce_sapling': (140, 0),
+            'minecraft:potted_birch_sapling': (140, 0),
+            'minecraft:potted_jungle_sapling': (140, 0),
+            'minecraft:potted_acacia_sapling': (140, 0),
+            'minecraft:potted_dark_oak_sapling': (140, 0),
+            'minecraft:potted_red_mushroom': (140, 0),
+            'minecraft:potted_brown_mushroom': (140, 0),
+            'minecraft:potted_fern': (140, 0),
+            'minecraft:potted_dead_bush': (140, 0),
+            'minecraft:potted_cactus': (140, 0),
+            'minecraft:potted_bamboo': (140, 0),
             'minecraft:carrots': (141, 0),
             'minecraft:potatoes': (142, 0),
             'minecraft:oak_button': (143, 0),
@@ -527,7 +548,9 @@ class RegionSet(object):
             'minecraft:player_wall_head': (144, 3), #not rendering
             'minecraft:creeper_wall_head': (144, 4), #not rendering
             'minecraft:dragon_wall_head': (144, 5), #not rendering
-            'minecraft:anvil': (145, 0), #not rendering
+            'minecraft:anvil': (145, 0),
+            'minecraft:chipped_anvil': (145, 4),
+            'minecraft:damaged_anvil': (145, 8),
             'minecraft:trapped_chest': (146, 0),
             'minecraft:light_weighted_pressure_plate': (147, 0),
             'minecraft:heavy_weighted_pressure_plate': (148, 0),
@@ -536,8 +559,10 @@ class RegionSet(object):
             'minecraft:redstone_block': (152, 0),
             'minecraft:nether_quartz_ore': (153, 0),
             'minecraft:hopper': (154, 0),
-            'minecraft:smooth_quartz': (155, 0),
             'minecraft:quartz_block': (155, 0),
+            'minecraft:smooth_quartz': (155, 0), # Only bottom texture is different
+            'minecraft:quartz_pillar': (155, 2),
+            'minecraft:chiseled_quartz_block': (155, 1),
             'minecraft:quartz_stairs': (156, 0),
             'minecraft:activator_rail': (157, 0),
             'minecraft:dropper': (158, 0),
@@ -549,7 +574,7 @@ class RegionSet(object):
             'minecraft:lime_terracotta': (159, 5),
             'minecraft:pink_terracotta': (159, 6),
             'minecraft:gray_terracotta': (159, 7),
-            'minecraft:silver_terracotta': (159, 8),
+            'minecraft:light_gray_terracotta': (159, 8),
             'minecraft:cyan_terracotta': (159, 9),
             'minecraft:purple_terracotta': (159, 10),
             'minecraft:blue_terracotta': (159, 11),
@@ -587,7 +612,6 @@ class RegionSet(object):
             'minecraft:terracotta': (172, 0),
             'minecraft:coal_block': (173, 0),
             'minecraft:packed_ice': (174, 0),
-            'minecraft:blue_ice': (174, 0), # close enough
             'minecraft:sunflower': (175, 0),
             'minecraft:lilac': (175, 1),
             'minecraft:tall_grass': (175, 2),
@@ -672,20 +696,16 @@ class RegionSet(object):
             # The following blocks are underwater and are not yet rendered.
             # To avoid spurious warnings, we'll treat them as water for now.
             'minecraft:brain_coral': (8, 0),
-            'minecraft:brain_coral_block': (8, 0),
             'minecraft:brain_coral_fan': (8, 0),
             'minecraft:brain_coral_wall_fan': (8, 0),
             'minecraft:bubble_column': (8, 0),
             'minecraft:bubble_coral': (8, 0),
-            'minecraft:bubble_coral_block': (8, 0),
             'minecraft:bubble_coral_fan': (8, 0),
             'minecraft:bubble_coral_wall_fan': (8, 0),
             'minecraft:fire_coral': (8, 0),
-            'minecraft:fire_coral_block': (8, 0),
             'minecraft:fire_coral_fan': (8, 0),
             'minecraft:fire_coral_wall_fan': (8, 0),
             'minecraft:horn_coral': (8, 0),
-            'minecraft:horn_coral_block': (8, 0),
             'minecraft:horn_coral_fan': (8, 0),
             'minecraft:horn_coral_wall_fan': (8, 0),
             'minecraft:kelp': (8, 0),
@@ -694,9 +714,59 @@ class RegionSet(object):
             'minecraft:seagrass': (8, 0),
             'minecraft:tall_seagrass': (8, 0),
             'minecraft:tube_coral': (8, 0),
-            'minecraft:tube_coral_block': (8, 0),
             'minecraft:tube_coral_fan': (8, 0),
             'minecraft:tube_coral_wall_fan': (8, 0),
+
+            #New blocks
+            'minecraft:carved_pumpkin': (11300, 0),
+            'minecraft:spruce_pressure_plate': (11301, 0),
+            'minecraft:birch_pressure_plate': (11302, 0),
+            'minecraft:jungle_pressure_plate': (11303, 0),
+            'minecraft:acacia_pressure_plate': (11304, 0),
+            'minecraft:dark_oak_pressure_plate': (11305, 0),
+            'minecraft:stripped_oak_log': (11306, 0),
+            'minecraft:stripped_spruce_log': (11306, 1),
+            'minecraft:stripped_birch_log': (11306, 2),
+            'minecraft:stripped_jungle_log': (11306, 3),
+            'minecraft:stripped_acacia_log': (11307, 0),
+            'minecraft:stripped_dark_oak_log': (11307, 1),
+            'minecraft:oak_wood': (11308, 0),
+            'minecraft:spruce_wood': (11308, 1),
+            'minecraft:birch_wood': (11308, 2),
+            'minecraft:jungle_wood': (11308, 3),
+            'minecraft:acacia_wood': (11309, 0),
+            'minecraft:dark_oak_wood': (11309, 1),
+            'minecraft:stripped_oak_wood': (11310, 0),
+            'minecraft:stripped_spruce_wood': (11310, 1),
+            'minecraft:stripped_birch_wood': (11310, 2),
+            'minecraft:stripped_jungle_wood': (11310, 3),
+            'minecraft:stripped_acacia_wood': (11311, 0),
+            'minecraft:stripped_dark_oak_wood': (11311, 1),
+            'minecraft:blue_ice': (11312, 0),
+            'minecraft:smooth_stone': (11313, 0),
+            'minecraft:smooth_sandstone': (11314, 0),
+            'minecraft:smooth_red_sandstone': (11315, 0),
+            'minecraft:brain_coral_block': (11316, 0),
+            'minecraft:bubble_coral_block': (11317, 0),
+            'minecraft:fire_coral_block': (11318, 0),
+            'minecraft:horn_coral_block': (11319, 0),
+            'minecraft:tube_coral_block': (11320, 0),
+            'minecraft:dead_brain_coral_block': (11321, 0),
+            'minecraft:dead_bubble_coral_block': (11322, 0),
+            'minecraft:dead_fire_coral_block': (11323, 0),
+            'minecraft:dead_horn_coral_block': (11324, 0),
+            'minecraft:dead_tube_coral_block': (11325, 0),
+            'minecraft:spruce_button': (11326,0),
+            'minecraft:birch_button': (11327,0),
+            'minecraft:jungle_button': (11328,0),
+            'minecraft:acacia_button': (11329,0),
+            'minecraft:dark_oak_button': (11330,0),
+            'minecraft:dried_kelp_block': (11331,0),
+            'minecraft:spruce_trapdoor': (11332, 0),
+            'minecraft:birch_trapdoor': (11333, 0),
+            'minecraft:jungle_trapdoor': (11334, 0),
+            'minecraft:acacia_trapdoor': (11335, 0),
+            'minecraft:dark_oak_trapdoor': (11336, 0),
         }
 
         colors = [   'white', 'orange', 'magenta', 'light_blue',
@@ -761,31 +831,81 @@ class RegionSet(object):
         elif key in ['minecraft:ladder', 'minecraft:chest', 'minecraft:ender_chest', 'minecraft:trapped_chest', 'minecraft:furnace']:
             facing = palette_entry['Properties']['facing']
             data = {'north': 2, 'south': 3, 'west': 4, 'east': 5}[facing]
-        elif key in ['minecraft:stone_button', 'minecraft:oak_button']:
+        elif key.endswith('_button'):
             facing = palette_entry['Properties']['facing']
-            data = {'east': 1, 'west': 2, 'south': 3, 'north': 4}[facing]
+            face   = palette_entry['Properties']['face']
+            if face == 'ceiling':
+                block = 0
+                data = 0
+            elif face == 'wall':
+                data = {'east': 1, 'west': 2, 'south': 3, 'north': 4}[facing]
+            elif face == 'floor':
+                data = {'east': 6, 'west': 6, 'south': 5, 'north': 5}[facing]
         elif key == 'minecraft:nether_wart':
             data = int(palette_entry['Properties']['age'])
         elif key.endswith('shulker_box') or key.endswith('piston') or key in ['minecraft:observer', 'minecraft:dropper', 'minecraft:dispenser']:
             facing = palette_entry['Properties']['facing']
             data = {'down': 0, 'up': 1, 'north': 2, 'south': 3, 'west': 4, 'east': 5}[facing]
-        elif key.endswith('_log'):
+        elif key.endswith('_log') or key.endswith('_wood') or key == 'minecraft:bone_block':
             axis = palette_entry['Properties']['axis']
             if axis == 'x':
                 data |= 4
             elif axis == 'z':
                 data |= 8
-        elif key in ['minecraft:redstone_torch','minecraft:redstone_wall_torch', 'minecraft:wall_torch']:
-            if palette_entry['Properties']['lit'] == 'true':
+        elif key == 'minecraft:quartz_pillar':
+            axis = palette_entry['Properties']['axis']
+            if axis == 'x':
+                data = 3
+            if axis == 'z':
+                data = 4
+        elif key in ['minecraft:redstone_torch','minecraft:redstone_wall_torch','minecraft:wall_torch']:
+            if key.startswith('minecraft:redstone_') and palette_entry['Properties']['lit'] == 'true':
                 block += 1
-            facing = palette_entry['Properties'].get('facing', 'up')
-            data = {'east': 1, 'west': 2, 'south': 3, 'north': 4, 'up': 5}[facing]
+            if key.endswith('wall_torch'):
+                facing = palette_entry['Properties'].get('facing')
+                data = {'east': 1, 'west': 2, 'south': 3, 'north': 4}[facing]
+            else:
+                data = 5
+        elif key in ['minecraft:brown_mushroom_block','minecraft:red_mushroom_block']:
+            p = palette_entry['Properties']
+            if p['up'] == 'true': data = 5
+            else: data = 0
+            if p['north'] == 'true':
+               if p['south'] == 'true': data = 14
+               elif p['east'] == 'true': data = 3
+               elif p['west'] == 'true': data = 1
+               else: data = 2
+            elif p['east'] == 'true':
+               if p['west'] == 'true': data = 14
+               elif p['south'] == 'true': data = 9
+               else: data = 6
+            elif p['south'] == 'true':
+               if p['west'] == 'true': data = 7
+               else: data = 8
+            elif p['west'] == 'true': data = 4
+        elif key in ['minecraft:carved_pumpkin', 'minecraft:jack_o_lantern'] or key.endswith('glazed_terracotta'):
+            facing = palette_entry['Properties']['facing']
+            data = {'south': 0, 'west': 1, 'north': 2, 'east': 3}[facing]
         elif key == 'minecraft:vine':
             p = palette_entry['Properties']
             if p['south'] == 'true': data |= 1
             if p['west']  == 'true': data |= 2
             if p['north'] == 'true': data |= 4
             if p['east']  == 'true': data |= 8
+        elif key.endswith('anvil'):
+            facing = palette_entry['Properties']['facing']
+            if facing == 'west':  data += 1
+            if facing == 'north': data += 2
+            if facing == 'east':  data += 3
+        elif key == 'minecraft:sign':
+            p = palette_entry['Properties']
+            data = p['rotation']
+        elif key == 'minecraft:wall_sign':
+            facing = palette_entry['Properties']['facing']
+            if   facing == 'north': data = 2
+            elif facing == 'west':  data = 4
+            elif facing == 'south': data = 3
+            elif facing == 'east':  data = 5
         elif key.endswith('_fence'):
             p = palette_entry['Properties']
             if p['north'] == 'true': data |= 1
@@ -808,6 +928,11 @@ class RegionSet(object):
                 'south': 0x03,
                 'east':  0x02,
                }[p['facing']]
+        elif key.endswith('_trapdoor'):
+            p = palette_entry['Properties']
+            data = {'south': 1, 'north': 0, 'east': 3, 'west': 2}[p['facing']]
+            if p['open'] == 'true': data |= 0x04
+            if p['half'] == 'top': data |= 0x08
 
         return (block, data)
 
@@ -836,91 +961,66 @@ class RegionSet(object):
         if bits_per_value < 4 or 12 < bits_per_value:
             raise nbt.CorruptChunkError()
         b = numpy.frombuffer(numpy.asarray(long_array, dtype=numpy.uint64), dtype=numpy.uint8)
+        # give room for work, later
+        b = b.astype(numpy.uint16)
         if bits_per_value == 8:
-            result = b.astype(numpy.uint16)
-        else:
-            result = []
-            i = 0
-            # We will consume the byte array in chunks equal to bits_per_value.
-            while i < len(b):
-                if bits_per_value == 4:
-                    for k in range(0, 4):
-                        result.extend([
-                             b[i + k] & 0x0f,
-                            (b[i + k] & 0xf0) >> 4,
-                            ])
-                    i += 4
-                elif bits_per_value == 5:
-                    result.extend([
-                          b[i] & 0x1f,
-                        ((b[i+1] & 0x03) << 3) | ((b[i] & 0xe0) >> 5),
-                         (b[i+1] & 0x7c) >> 2,
-                        ((b[i+2] & 0x0f) << 1) | ((b[i+1] & 0x80) >> 7),
-                        ((b[i+3] & 0x01) << 4) | ((b[i+2] & 0xf0) >> 4),
-                         (b[i+3] & 0x3e) >> 1,
-                        ((b[i+4]   & 0x07) << 2) | ((b[i+3] & 0xc0) >> 6),
-                         (b[i+4]   & 0xf8) >> 3,
-                        ])
-                    i += 5
-                elif bits_per_value == 6:
-                    result.extend([
-                          b[i] & 0x3f,
-                        ((b[i+1] & 0x0f) << 2) | ((b[i]   & 0xc0) >> 6),
-                        ((b[i+2] & 0x03) << 4) | ((b[i+1] & 0xf0) >> 4),
-                         (b[i+2] & 0xfc) >> 2,
-                         ])
-                    i += 3
-                elif bits_per_value == 7:
-                    result.extend([
-                          b[i] & 0x7f,
-                        ((b[i+1] & 0x3f) << 1) | ((b[i]   & 0x80) >> 7),
-                        ((b[i+2] & 0x1f) << 2) | ((b[i+1] & 0xc0) >> 6),
-                        ((b[i+3] & 0x0f) << 3) | ((b[i+2] & 0xe0) >> 5),
-                        ((b[i+4] & 0x07) << 4) | ((b[i+3] & 0xf0) >> 4),
-                        ((b[i+5] & 0x03) << 5) | ((b[i+4] & 0xf8) >> 3),
-                        ((b[i+6] & 0x01) << 6) | ((b[i+5] & 0xfc) >> 2),
-                         (b[i+6] & 0xfc) >> 1,
-                         ])
-                    i += 7
-                elif bits_per_value == 9:
-                    result.extend([
-                        ((b[i+1] & 0x01) << 8) | b[0],
-                        ((b[i+2] & 0x03) << 7) | ((b[i+1] & 0xfe) >> 1),
-                        ((b[i+3] & 0x07) << 6) | ((b[i+2] & 0xfc) >> 2),
-                        ((b[i+4] & 0x0f) << 5) | ((b[i+3] & 0xf8) >> 3),
-                        ((b[i+5] & 0x1f) << 4) | ((b[i+4] & 0xf0) >> 4),
-                        ((b[i+6] & 0x3f) << 3) | ((b[i+5] & 0xe0) >> 5),
-                        ((b[i+7] & 0x7f) << 2) | ((b[i+6] & 0xc0) >> 6),
-                         (b[i+8] << 1) | ((b[i+7] & 0x80) >> 7),
-                        ])
-                    i += 9
-                elif bits_per_value == 10:
-                    result.extend([
-                        ((b[i+1] & 0x03) << 8) |   b[0],
-                        ((b[i+2] & 0x0f) << 6) | ((b[i+1] & 0xfc) >> 2),
-                        ((b[i+3] & 0x3f) << 4) | ((b[i+2] & 0xf0) >> 4),
-                         (b[i+4] << 2)         | ((b[i+3] & 0xc0) >> 6),
-                        ])
-                    i += 5
-                elif bits_per_value == 11:
-                    result.extend([
-                        ((b[i+1] & 0x07) << 8) |   b[0],
-                        ((b[i+2] & 0x3f) << 5) | ((b[i+1] & 0xf8) >> 3),
-                        ((b[i+4] & 0x01) << 10)| (b[i+3] << 2) | ((b[i+2] & 0xc0) >> 6),
-                        ((b[i+5] & 0x0f) << 7) | ((b[i+4] & 0xfe) >> 1),
-                        ((b[i+6] & 0x7f) << 4) | ((b[i+5] & 0xf0) >> 4),
-                        ((b[i+8] & 0x03) << 9) | (b[i+7] << 1) | ((b[i+6] & 0x80) >> 7),
-                        ((b[i+9] & 0x1f) << 2) | ((b[i+8] & 0xfc) >> 2),
-                         (b[i+10]        << 3) | ((b[i+9] & 0xe0) >> 5),
-                       ])
-                    i += 11
-                elif bits_per_value == 12:
-                    result.extend([
-                        ((b[i+1] & 0x0f) << 8) |   b[0],
-                         (b[i+2]         << 4) | ((b[i+1] & 0xf0) >> 4),
-                        ])
-                    i += 3
-            result = numpy.asarray(result, numpy.uint16)
+            return b
+
+        result = numpy.zeros((n,), dtype=numpy.uint16)
+        if bits_per_value == 4:
+            result[0::2] =  b & 0x0f
+            result[1::2] = (b & 0xf0) >> 4
+        elif bits_per_value == 5:
+            result[0::8] =   b[0::5] & 0x1f
+            result[1::8] = ((b[1::5] & 0x03) << 3) | ((b[0::5] & 0xe0) >> 5)
+            result[2::8] =  (b[1::5] & 0x7c) >> 2
+            result[3::8] = ((b[2::5] & 0x0f) << 1) | ((b[1::5] & 0x80) >> 7)
+            result[4::8] = ((b[3::5] & 0x01) << 4) | ((b[2::5] & 0xf0) >> 4)
+            result[5::8] =  (b[3::5] & 0x3e) >> 1
+            result[6::8] = ((b[4::5] & 0x07) << 2) | ((b[3::5] & 0xc0) >> 6)
+            result[7::8] =  (b[4::5] & 0xf8) >> 3
+        elif bits_per_value == 6:
+            result[0::4] =   b[0::3] & 0x3f
+            result[1::4] = ((b[1::3] & 0x0f) << 2) | ((b[0::3] & 0xc0) >> 6)
+            result[2::4] = ((b[2::3] & 0x03) << 4) | ((b[1::3] & 0xf0) >> 4)
+            result[3::4] =  (b[2::3] & 0xfc) >> 2
+        elif bits_per_value == 7:
+            result[0::8] =   b[0::7] & 0x7f
+            result[1::8] = ((b[1::7] & 0x3f) << 1) | ((b[0::7] & 0x80) >> 7)
+            result[2::8] = ((b[2::7] & 0x1f) << 2) | ((b[1::7] & 0xc0) >> 6)
+            result[3::8] = ((b[3::7] & 0x0f) << 3) | ((b[2::7] & 0xe0) >> 5)
+            result[4::8] = ((b[4::7] & 0x07) << 4) | ((b[3::7] & 0xf0) >> 4)
+            result[5::8] = ((b[5::7] & 0x03) << 5) | ((b[4::7] & 0xf8) >> 3)
+            result[6::8] = ((b[6::7] & 0x01) << 6) | ((b[5::7] & 0xfc) >> 2)
+            result[7::8] =  (b[6::7] & 0xfc) >> 1
+        # bits_per_value == 8 is handled above
+        elif bits_per_value == 9:
+            result[0::8] = ((b[1::9] & 0x01) << 8) |   b[0::9]
+            result[1::8] = ((b[2::9] & 0x03) << 7) | ((b[1::9] & 0xfe) >> 1)
+            result[2::8] = ((b[3::9] & 0x07) << 6) | ((b[2::9] & 0xfc) >> 2)
+            result[3::8] = ((b[4::9] & 0x0f) << 5) | ((b[3::9] & 0xf8) >> 3)
+            result[4::8] = ((b[5::9] & 0x1f) << 4) | ((b[4::9] & 0xf0) >> 4)
+            result[5::8] = ((b[6::9] & 0x3f) << 3) | ((b[5::9] & 0xe0) >> 5)
+            result[6::8] = ((b[7::9] & 0x7f) << 2) | ((b[6::9] & 0xc0) >> 6)
+            result[7::8] = ( b[8::9]         << 1) | ((b[7::9] & 0x80) >> 7)
+        elif bits_per_value == 10:
+            result[0::4] = ((b[1::5] & 0x03) << 8) |   b[0::5]
+            result[1::4] = ((b[2::5] & 0x0f) << 6) | ((b[1::5] & 0xfc) >> 2)
+            result[2::4] = ((b[3::5] & 0x3f) << 4) | ((b[2::5] & 0xf0) >> 4)
+            result[3::4] = ( b[4::5]         << 2) | ((b[3::5] & 0xc0) >> 6)
+        elif bits_per_value == 11:
+            result[0::8] = ((b[ 1::11] & 0x07) << 8 ) |   b[ 0::11]
+            result[1::8] = ((b[ 2::11] & 0x3f) << 5 ) | ((b[ 1::11] & 0xf8) >> 3 )
+            result[2::8] = ((b[ 4::11] & 0x01) << 10) | ( b[ 3::11]         << 2 ) | ((b[ 2::11] & 0xc0) >> 6 )
+            result[3::8] = ((b[ 5::11] & 0x0f) << 7 ) | ((b[ 4::11] & 0xfe) >> 1 )
+            result[4::8] = ((b[ 6::11] & 0x7f) << 4 ) | ((b[ 5::11] & 0xf0) >> 4 )
+            result[5::8] = ((b[ 8::11] & 0x03) << 9 ) | ( b[ 7::11]         << 1 ) | ((b[ 6::11] & 0x80) >> 7 )
+            result[6::8] = ((b[ 9::11] & 0x1f) << 2 ) | ((b[ 8::11] & 0xfc) >> 2 )
+            result[7::8] = ( b[10::11]         << 3 ) | ((b[ 9::11] & 0xe0) >> 5 )
+        elif bits_per_value == 12:
+            result[0::2] = ((b[1::3] & 0x0f) << 8) |   b[0::3]
+            result[1::2] = ( b[2::3]         << 4) | ((b[1::3] & 0xf0) >> 4)
+
         return result
 
     def _get_blockdata_v113(self, section, unrecognized_block_types):
