@@ -194,17 +194,23 @@ class World(object):
         spawnY = data['SpawnY']
         disp_spawnZ = spawnZ = data['SpawnZ']
 
-        ## The chunk that holds the spawn location
-        chunkX = spawnX//16
-        chunkZ = spawnZ//16
-
         ## clamp spawnY to a sane value, in-chunk value
         if spawnY < 0:
             spawnY = 0
         if spawnY > 255:
             spawnY = 255
+            
+        ## The chunk that holds the spawn location
+        chunkX = spawnX//16
+        chunkY = spawnY//16
+        chunkZ = spawnZ//16
+        
+        ## The block for spawn *within* the chunk
+        inChunkX = spawnX % 16
+        inChunkZ = spawnZ % 16
+        inChunkY = spawnY % 16
 
-        # Open up the chunk that the spawn is in
+        ## Open up the chunk that the spawn is in
         regionset = self.get_regionset(None)
         if not regionset:
             return None
@@ -212,27 +218,22 @@ class World(object):
             chunk = regionset.get_chunk(chunkX, chunkZ)
         except ChunkDoesntExist:
             return (spawnX, spawnY, spawnZ)
-
-        def getBlock(y):
-            "This is stupid and slow but I don't care"
-            targetSection = spawnY//16
-            for section in chunk['Sections']:
-                if section['Y'] == targetSection:
-                    blockArray = section['Blocks']
-                    return blockArray[inChunkX, inChunkZ, y % 16]
-            return 0
-
-
-
-        ## The block for spawn *within* the chunk
-        inChunkX = spawnX - (chunkX*16)
-        inChunkZ = spawnZ - (chunkZ*16)
-
-        ## find the first air block
-        while (getBlock(spawnY) != 0) and spawnY < 256:
-            spawnY += 1
-
-        return spawnX, spawnY, spawnZ
+        
+        ## Check for first air block (0) above spawn
+        
+        # Get only the spawn section and the ones above, ordered from low to high
+        spawnChunkSections = sorted(chunk['Sections'], key=lambda sec: sec['Y'])[chunkY:]
+        for section in spawnChunkSections:
+            # First section, start at registered local y
+            for y in range(inChunkY, 16):
+                # If air, return absolute coords
+                if section['Blocks'][inChunkX, inChunkZ, y] == 0:
+                    return spawnX, spawnY, spawnZ
+                # Keep track of the absolute Y
+                spawnY += 1
+            # Next section, start at local 0
+            inChunkY = 0
+        return spawnX, 256, spawnZ
 
 class RegionSet(object):
     """This object is the gateway to a particular Minecraft dimension within a
@@ -414,6 +415,7 @@ class RegionSet(object):
             'minecraft:bricks': (45, 0),
             'minecraft:tnt': (46, 0),
             'minecraft:bookshelf': (47, 0),
+            'minecraft:mossy_cobblestone': (48, 0),
             'minecraft:obsidian': (49, 0),
             'minecraft:wall_torch': (50, 0),
             'minecraft:torch': (50, 5),
@@ -515,8 +517,8 @@ class RegionSet(object):
             'minecraft:jungle_stairs': (136, 0),
             'minecraft:command_block': (137, 0),
             'minecraft:beacon': (138, 0),
-            'minecraft:mossy_cobblestone': (139, 16),
             'minecraft:cobblestone_wall': (139, 0),
+            'minecraft:mossy_cobblestone_wall': (139, 1),
             'minecraft:flower_pot': (140, 0),
             'minecraft:potted_poppy': (140, 0),  # Pots not rendering
             'minecraft:potted_blue_orchid': (140, 0),
@@ -542,12 +544,12 @@ class RegionSet(object):
             'minecraft:carrots': (141, 0),
             'minecraft:potatoes': (142, 0),
             'minecraft:oak_button': (143, 0),
-            'minecraft:skeleton_wall_skull': (144, 0), #not rendering
-            'minecraft:wither_skeleton_wall_skull': (144, 1), #not rendering
-            'minecraft:zombie_wall_head': (144, 2), #not rendering
-            'minecraft:player_wall_head': (144, 3), #not rendering
-            'minecraft:creeper_wall_head': (144, 4), #not rendering
-            'minecraft:dragon_wall_head': (144, 5), #not rendering
+            'minecraft:skeleton_wall_skull': (144, 0),  # not rendering
+            'minecraft:wither_skeleton_wall_skull': (144, 1),   # not rendering
+            'minecraft:zombie_wall_head': (144, 2),     # not rendering
+            'minecraft:player_wall_head': (144, 3),     # not rendering
+            'minecraft:creeper_wall_head': (144, 4),    # not rendering
+            'minecraft:dragon_wall_head': (144, 5),     # not rendering
             'minecraft:anvil': (145, 0),
             'minecraft:chipped_anvil': (145, 4),
             'minecraft:damaged_anvil': (145, 8),
@@ -560,7 +562,7 @@ class RegionSet(object):
             'minecraft:nether_quartz_ore': (153, 0),
             'minecraft:hopper': (154, 0),
             'minecraft:quartz_block': (155, 0),
-            'minecraft:smooth_quartz': (155, 0), # Only bottom texture is different
+            'minecraft:smooth_quartz': (155, 0),    # Only bottom texture is different
             'minecraft:quartz_pillar': (155, 2),
             'minecraft:chiseled_quartz_block': (155, 1),
             'minecraft:quartz_stairs': (156, 0),
@@ -637,7 +639,7 @@ class RegionSet(object):
             'minecraft:jungle_door': (195, 0),
             'minecraft:acacia_door': (196, 0),
             'minecraft:dark_oak_door': (197, 0),
-            'minecraft:end_rod': (198, 0), #not rendering
+            'minecraft:end_rod': (198, 0),  # not rendering
             'minecraft:chorus_plant': (199, 0),
             'minecraft:chorus_flower': (200, 0),
             'minecraft:purpur_block': (201, 0),
@@ -665,7 +667,7 @@ class RegionSet(object):
             'minecraft:gray_shulker_box': (226, 0),
             'minecraft:light_gray_shulker_box': (227, 0),
             'minecraft:cyan_shulker_box': (228, 0),
-            'minecraft:shulker_box': (229, 0), #wrong color
+            'minecraft:shulker_box': (229, 0),  # wrong color
             'minecraft:purple_shulker_box': (229, 0),
             'minecraft:blue_shulker_box': (230, 0),
             'minecraft:brown_shulker_box': (231, 0),
@@ -691,7 +693,7 @@ class RegionSet(object):
 
             'minecraft:structure_block': (255, 0),
 
-            'minecraft:armor_stand': (416, 0), #not rendering
+            'minecraft:armor_stand': (416, 0),  # not rendering
 
             # The following blocks are underwater and are not yet rendered.
             # To avoid spurious warnings, we'll treat them as water for now.
@@ -717,7 +719,7 @@ class RegionSet(object):
             'minecraft:tube_coral_fan': (8, 0),
             'minecraft:tube_coral_wall_fan': (8, 0),
 
-            #New blocks
+            # New blocks
             'minecraft:carved_pumpkin': (11300, 0),
             'minecraft:spruce_pressure_plate': (11301, 0),
             'minecraft:birch_pressure_plate': (11302, 0),
@@ -767,6 +769,7 @@ class RegionSet(object):
             'minecraft:jungle_trapdoor': (11334, 0),
             'minecraft:acacia_trapdoor': (11335, 0),
             'minecraft:dark_oak_trapdoor': (11336, 0),
+            'minecraft:petrified_oak_slab': (126, 0),
         }
 
         colors = [   'white', 'orange', 'magenta', 'light_blue',
@@ -823,11 +826,14 @@ class RegionSet(object):
         elif key in ('minecraft:sunflower', 'minecraft:lilac', 'minecraft:tall_grass', 'minecraft:large_fern', 'minecraft:rose_bush', 'minecraft:peony'):
             if palette_entry['Properties']['half'] == 'upper':
                 data |= 0x08
-        elif key == 'minecraft_wheat':
-            data = int(palette_entry['Properties']['age'])
-        elif key in ['minecraft:stone_slab', 'minecraft:sandstone_slab', 'minecraft:oak_slab', 'minecraft:cobblestone_slab', 'minecraft:brick_slab', 'minecraft:stone_brick_slab', 'minecraft:nether_brick_slab', 'minecraft:quartz_slab']:
+        elif key in ['minecraft:stone_slab', 'minecraft:sandstone_slab', 'minecraft:oak_slab',
+                     'minecraft:cobblestone_slab', 'minecraft:brick_slab',
+                     'minecraft:stone_brick_slab', 'minecraft:nether_brick_slab',
+                     'minecraft:quartz_slab', 'minecraft:petrified_oak_slab']:
             if palette_entry['Properties']['type'] == 'top':
                 data += 8
+            elif palette_entry['Properties']['type'] == 'double':
+                block = 125
         elif key in ['minecraft:ladder', 'minecraft:chest', 'minecraft:ender_chest', 'minecraft:trapped_chest', 'minecraft:furnace']:
             facing = palette_entry['Properties']['facing']
             data = {'north': 2, 'south': 3, 'west': 4, 'east': 5}[facing]
@@ -933,6 +939,9 @@ class RegionSet(object):
             data = {'south': 1, 'north': 0, 'east': 3, 'west': 2}[p['facing']]
             if p['open'] == 'true': data |= 0x04
             if p['half'] == 'top': data |= 0x08
+        elif key in ['minecraft:beetroots', 'minecraft:melon_stem', 'minecraft:wheat',
+                     'minecraft:pumpkin_stem', 'minecraft:potatoes', 'minecraft:carrots']:
+            data = palette_entry['Properties']['age']
 
         return (block, data)
 
