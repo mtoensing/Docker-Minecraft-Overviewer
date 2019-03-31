@@ -623,6 +623,8 @@ class RegionSet(object):
             'minecraft:standing_banner': (176, 0),
             'minecraft:wall_banner': (177, 0),
             'minecraft:red_sandstone': (179, 0),
+            'minecraft:cut_red_sandstone': (179, 2),
+            'minecraft:chiseled_red_sandstone': (179, 3),
             'minecraft:red_sandstone_stairs': (180, 0),
             'minecraft:spruce_fence_gate': (183, 0),
             'minecraft:birch_fence_gate': (184, 0),
@@ -833,7 +835,10 @@ class RegionSet(object):
             if palette_entry['Properties']['type'] == 'top':
                 data += 8
             elif palette_entry['Properties']['type'] == 'double':
-                block = 125
+                if 'oak' in key:
+                    block = 125
+                elif key == 'minecraft:stone_brick_slab':
+                    block = 98
         elif key in ['minecraft:ladder', 'minecraft:chest', 'minecraft:ender_chest', 'minecraft:trapped_chest', 'minecraft:furnace']:
             facing = palette_entry['Properties']['facing']
             data = {'north': 2, 'south': 3, 'west': 4, 'east': 5}[facing]
@@ -920,10 +925,12 @@ class RegionSet(object):
             if p['east']  == 'true': data |= 8
         elif key.endswith('_stairs'):
             facing = palette_entry['Properties']['facing']
-            if   facing == 'south': data |= 0x60
-            elif facing == 'east':  data |= 0x30
-            elif facing == 'north': data |= 0x18
-            elif facing == 'west':  data |= 0x48
+            if   facing == 'south': data = 2
+            elif facing == 'east':  data = 0
+            elif facing == 'north': data = 3
+            elif facing == 'west':  data = 1
+            if palette_entry['Properties']['half'] == 'top':
+                data |= 0x4
         elif key.endswith('_door'):
             p = palette_entry['Properties']
             if p['hinge'] == 'left': data |= 0x10
@@ -942,7 +949,6 @@ class RegionSet(object):
         elif key in ['minecraft:beetroots', 'minecraft:melon_stem', 'minecraft:wheat',
                      'minecraft:pumpkin_stem', 'minecraft:potatoes', 'minecraft:carrots']:
             data = palette_entry['Properties']['age']
-
         return (block, data)
 
     def get_type(self):

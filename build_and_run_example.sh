@@ -1,4 +1,4 @@
-docker build -t marctv/overviewer113 /Users/mtoe/Documents/Minecraft-Overviewer
+docker build -t marctv/overviewer113 .
 docker run \
   --rm \
   -v /Users/mtoe/Documents/mcserver/:/tmp/world/:ro \
