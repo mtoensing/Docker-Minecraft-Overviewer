@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 #    This file is part of the Minecraft Overviewer.
 #
@@ -21,10 +21,8 @@ import platform
 import sys
 
 # quick version check
-if not (sys.version_info[0] == 2 and sys.version_info[1] >= 6):
-    print("Sorry, the Overviewer requires at least Python 2.6 to run")
-    if sys.version_info[0] >= 3:
-        print("and will not run on Python 3.0 or later")
+if sys.version_info[0] == 2 or (sys.version_info[0] == 3 and sys.version_info[1] < 4):
+    print("Sorry, the Overviewer requires at least Python 3.4 to run.")
     sys.exit(1)
 
 import os
@@ -35,6 +33,7 @@ import multiprocessing
 import time
 import logging
 from argparse import ArgumentParser
+from collections import OrderedDict
 
 from overviewer_core import util
 from overviewer_core import logger
@@ -63,6 +62,20 @@ def main():
                             "permissions instead. Overviewer does not need access to "
                             "critical system resources and therefore does not require "
                             "root access.")
+        try:
+            with open("/etc/redhat-release", "r") as release_f:
+                rel_contents = release_f.read()
+                try:
+                    major_rel = re.search(r'\d(\.\d+)?', rel_contents).group(0).split('.')[0]
+                    if major_rel == "6":
+                        logging.warning(
+                            "We will be dropping support for this release of your distribution "
+                            "soon. Please upgrade as soon as possible, or you will not receive "
+                            "future Overviewer updates.")
+                except AttributeError:
+                    pass
+        except IOError:
+            pass
 
     try:
         cpus = multiprocessing.cpu_count()
@@ -134,9 +147,9 @@ def main():
     args, unknowns = parser.parse_known_args()
 
     # Check for possible shell quoting issues
-    if len(unknowns) > 0:
+    if len(unknowns) > 0 and args.world and args.output:
         possible_mistakes = []
-        for i in xrange(len(unknowns) + 1):
+        for i in range(len(unknowns) + 1):
             possible_mistakes.append(" ".join([args.world, args.output] + unknowns[:i]))
             possible_mistakes.append(" ".join([args.output] + unknowns[:i]))
         for mistake in possible_mistakes:
@@ -183,9 +196,9 @@ def main():
         print("Currently running Minecraft Overviewer %s" % util.findGitVersion() +
               " (%s)" % util.findGitHash()[:7])
         try:
-            import urllib
+            from urllib import request
             import json
-            latest_ver = json.loads(urllib.urlopen("http://overviewer.org/download.json")
+            latest_ver = json.loads(request.urlopen("http://overviewer.org/download.json")
                                     .read())['src']
             print("Latest version of Minecraft Overviewer %s (%s)" % (latest_ver['version'],
                                                                       latest_ver['commit'][:7]))
@@ -294,7 +307,7 @@ def main():
             rendermodes = args.rendermodes.replace("-", "_").split(",")
 
         # Now for some good defaults
-        renders = util.OrderedDict()
+        renders = OrderedDict()
         for rm in rendermodes:
             renders["world-" + rm] = {
                 "world": "world",
@@ -337,7 +350,7 @@ def main():
 
     if args.check_terrain:   # we are already in the "if configfile" branch
         logging.info("Looking for a few common texture files...")
-        for render_name, render in config['renders'].iteritems():
+        for render_name, render in config['renders'].items():
             logging.info("Looking at render %r.", render_name)
 
             # find or create the textures object
@@ -356,7 +369,7 @@ def main():
     logging.debug("Current log level: {0}.".format(logging.getLogger().level))
 
     def set_renderchecks(checkname, num):
-        for name, render in config['renders'].iteritems():
+        for name, render in config['renders'].items():
             if render.get('renderchecks', 0) == 3:
                 logging.warning(checkname + " ignoring render " + repr(name) + " since it's "
                                 "marked as \"don't render\".")
@@ -381,7 +394,7 @@ def main():
 
     #####################
     # Do a few last minute things to each render dictionary here
-    for rname, render in config['renders'].iteritems():
+    for rname, render in config['renders'].items():
         # Convert render['world'] to the world path, and store the original
         # in render['worldname_orig']
         try:
@@ -437,7 +450,7 @@ def main():
 
     # The changelist support.
     changelists = {}
-    for render in config['renders'].itervalues():
+    for render in config['renders'].values():
         if 'changelist' in render:
             path = render['changelist']
             if path not in changelists:
@@ -461,7 +474,7 @@ def main():
     # TODO: optionally more caching layers here
 
     renders = config['renders']
-    for render_name, render in renders.iteritems():
+    for render_name, render in renders.items():
         logging.debug("Found the following render thing: %r", render)
 
         # find or create the world object
@@ -572,7 +585,7 @@ def main():
 
     assetMrg.finalize(tilesets)
 
-    for out in changelists.itervalues():
+    for out in changelists.values():
         logging.debug("Closing %s (%s).", out, out.fileno())
         out.close()
 
@@ -603,8 +616,8 @@ def list_worlds():
     formatString = "%-" + str(worldNameLen) + "s | %-8s | %-16s | %s "
     print(formatString % ("World", "Playtime", "Modified", "Path"))
     print(formatString % ("-" * worldNameLen, "-" * 8, '-' * 16, '-' * 4))
-    for name, info in sorted(worlds.iteritems()):
-        if isinstance(name, basestring) and name.startswith("World") and len(name) == 6:
+    for name, info in sorted(worlds.items()):
+        if isinstance(name, str) and name.startswith("World") and len(name) == 6:
             try:
                 world_n = int(name[-1])
                 # we'll catch this one later, when it shows up as an

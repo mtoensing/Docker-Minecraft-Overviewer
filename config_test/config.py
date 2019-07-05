@@ -43,89 +43,9 @@ renders["day"] = {
     'crop': my_crop,
     'markers': thingsToMaker
 }
-'''
-renders["day_r"] = {
-    'world': 'pudel',
-    'title': 'Day Reversed',
-    'rendermode': 'normal',
-    "dimension": "overworld",
-    'crop': my_crop,
-    'northdirection': "lower-right",
-    'markers': thingsToMaker
-}
-
-
-renders["day_lighting"] = {
-    'world': 'pudel',
-    'title': 'Day Lighting',
-    'rendermode': 'lighting',
-    "dimension": "overworld",
-    'crop': my_crop,
-    'markers': thingsToMaker
-}
-
-renders["day_nowater"] = {
-    'world': 'pudel',
-    'title': 'Day No Water',
-    'rendermode': my_nowater,
-    "dimension": "overworld",
-    'crop': my_crop,
-    'markers': thingsToMaker
-}
-
-renders["night"] = {
-    'world': 'pudel',
-    'title': 'Night',
-    'rendermode': 'night',
-    "dimension": "overworld",
-    'crop': my_crop,
-    'markers': thingsToMaker
-}
-
-renders["night_smooth"] = {
-    'world': 'pudel',
-    'title': 'Night Smooth',
-    'rendermode': 'smooth_night',
-    "dimension": "overworld",
-    'crop': my_crop,
-    'markers': thingsToMaker
-}
-
-renders["cave"] = {
-    'world': 'pudel',
-    'title': 'Cave',
-    'rendermode': my_cave,
-    "dimension": "overworld",
-    'crop': my_crop,
-    'markers': thingsToMaker
-}
-
-# Railoverlay
-renders["rails"] = {
-    'world': 'pudel',
-    'title': 'Subway',
-    "dimension": "overworld",
-    'rendermode': [ClearBase(),
-            StructureOverlay(structures=[
-                    (((0, 0, 0, 66), (0, -1, 0, 4)), (255, 0,   0, 255)),
-                    (((0, 0, 0, 27), (0, -1, 0, 4)), (0,   255, 0, 255)),
-                    (((0, 0, 0, 28), (0, -1, 0, 4)), (255, 255, 0, 255))
-            ]), EdgeLines()],
-    "overlay": ["night", "day","night_smooth","day_lighting","day_nowater"],
-    'crop': my_crop,
-}
-
-renders["nether"] = {
-    "world": "pudel_nether",
-    "title": "Nether",
-    "rendermode": "nether",
-    "dimension": "nether",
-    'crop': (-200, -200, 200, 200),
-}
-'''
 
 # Import the Observers
-from observer import MultiplexingObserver, ProgressBarObserver, JSObserver
+from .observer import MultiplexingObserver, ProgressBarObserver, JSObserver
 
 # Construct the ProgressBarObserver
 ProgressBarObserver = ProgressBarObserver()

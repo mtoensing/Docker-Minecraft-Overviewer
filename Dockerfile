@@ -3,9 +3,9 @@ FROM ubuntu:18.04
 RUN apt-get update
 RUN apt-get update && apt-get install -y \
     build-essential \
-    python-pil \
-    python-dev \
-    python-numpy \
+    python3-pillow \
+    python3-dev \
+    python3-numpy \
     git \
     wget \
  && rm -rf /var/lib/apt/lists/*
@@ -15,7 +15,7 @@ WORKDIR /tmp/overviewer
 
 COPY COPY/Minecraft-Overviewer /tmp/overviewer
 COPY COPY/Minecraft-Overviewer/overviewer_core/aux_files/genPOI.py /tmp/overviewer
-RUN python2 setup.py build
+RUN python3 setup.py build
 
 COPY COPY/client.jar /tmp/overviewer
 

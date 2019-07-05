@@ -45,13 +45,13 @@ Prerequisites
 
 You will need the following:
 
-- `Python 2.7 <https://www.python.org/downloads/windows/>`_
+- `Python 3.x <https://www.python.org/downloads/windows/>`_
 - A copy of the `Pillow sources <https://github.com/python-pillow/Pillow>`_.
 - The Pillow Extension for Python.
 - The Numpy Extension for Python.
 - The extensions can be installed via::
 
-    c:\python27\python.exe -m pip -U numpy pillow
+    c:\python37\python.exe -m pip -U numpy pillow
 
 
 Building with Visual Studio
@@ -63,7 +63,7 @@ Building with Visual Studio
 4. Copy Imaging.h and ImPlatform.h from your Pillow sources into the current working directory.
 5. First try a build::
 
-    c:\python27\python setup.py build
+    c:\python37\python setup.py build
 
 If you encounter the following errors::
 
@@ -73,7 +73,7 @@ then try the following::
 
     set DISTUTILS_USE_SDK=1
     set MSSdk=1
-    c:\python27\python setup.py build
+    c:\python37\python setup.py build
 
 If the build was successful, there should be a c_overviewer.pyd file in your current working directory.
 
@@ -87,7 +87,7 @@ This is the recommended way to build on Windows without MSVC.
 
 2. Install the dependencies::
 
-    pacman -S git mingw-w64-x86_64-python2-numpy mingw-w64-x86_64-python2-Pillow mingw-w64-x86_64-python2 mingw-w64-x86_64-toolchain
+    pacman -S git mingw-w64-x86_64-python3-numpy mingw-w64-x86_64-python3-Pillow mingw-w64-x86_64-python3 mingw-w64-x86_64-toolchain
 
 3. Clone the Minecraft-Overviewer git repository::
 
@@ -102,7 +102,7 @@ This is the recommended way to build on Windows without MSVC.
    directory and executing the build script::
 
     cd Minecraft-Overviewer
-    python2 setup.py build
+    python3 setup.py build
 
 After it finishes, you should now be able to execute ``overviewer.py`` from the MINGW64
 shell.
@@ -115,7 +115,7 @@ Building with mingw
 3. Copy Imaging.h and ImPlatform.h from your Pillow sources into the current working directory.
 4. Build::
 
-    python setup.py build --compiler=mingw32
+    python3 setup.py build --compiler=mingw32
     
 If the build fails with complaints about ``-mno-cygwin``, open the file ``Lib/distutils/cygwincompiler.py``
 in an editor of your choice, and remove all mentions of ``-mno-cygwin``. This is a bug in distutils,
@@ -130,42 +130,46 @@ Debian, this can be done by installing the ``build-essential`` package.
 
 You will need the following packages (at least):
 
-* python-imaging or python-pillow
-* python-imaging-dev or python-pillow-dev
-* python-dev
-* python-numpy
+* python3-imaging or python3-pillow
+* python3-imaging-dev or python3-pillow-dev
+* python3-dev
+* python3-numpy
 
 Then to build::
 
-    python2 setup.py build
+    python3 setup.py build
     
-At this point, you can run ``./overviewer.py`` from the current directory, so to run it you'll have to be in this directory and run ``./overviewer.py`` or provide the the full path to ``overviewer.py``.  Another option would be to add this directory to your ``$PATH``.   Note that there is a ``python2 setup.py install`` step that you can run which will install things into ``/usr/local/bin``, but this is strongly not recommended as it might conflict with other installs of Overviewer.
+At this point, you can run ``./overviewer.py`` from the current directory, so to run it you'll have to be in this directory and run ``./overviewer.py`` or provide the the full path to ``overviewer.py``.  Another option would be to add this directory to your ``$PATH``.   Note that there is a ``python3 setup.py install`` step that you can run which will install things into ``/usr/local/bin``, but this is strongly not recommended as it might conflict with other installs of Overviewer.
 
 macOS
 -----
 
-1. Install xCode Command Line Tools by running the command (``xcode-select --install``) in terminal (located in your /Applications/Utilities folder
-2. Install Python 2.7.10 if you don't already have it https://www.python.org/ftp/python/2.7.10/python-2.7.10-macosx10.6.pkg
-3. Install PIP (``sudo easy-install pip``)
-4. Install Pillow (overviewer needs PIL, Pillow is a fork of PIL that provides the same funcitonality) (``pip install Pillow``)
-5. Download the Pillow source files from https://github.com/python-pillow/Pillow/releases/latest and unpack the tar.gz file and move it to a directory you can remember
-6. Download the Minercaft Overviewer source-code from https://overviewer.org/builds/overviewer-latest.tar.gz
-7. Extract overviewer-[Version].tar.gz and move it to a directory you can remember
-8. Go into your Pillow-[Version] folder and navigate to the /src/libImaging directory
-9. Drag the following files from the Pillow-[Version]/src/libImaging folder to your overviewer-[Version] folder (``Imaging.h, ImagingUtils, ImPlatform.h``)
-10. Symlink Python by running the command (``sudo ln -sf /usr/bin/python2.7 /usr/local/bin/python2``) in terminal
-11. In terminal change directory to your overviewer-[Version] folder (e.g ``cd Desktop/overviewer-[Version]``)
-12. Build::
+#. Install the Xcode Command Line Tools by running the following command in a terminal (located in your /Applications/Utilities folder)::
 
-    (``PIL_INCLUDE_DIR="/path/to/Pillow-[version]/libImaging" python2 setup.py build``)
+    xcode-select --install
 
-FreeBSD
--------
-FreeBSD is similar to macOS and Linux, but ensure you're using Python 2.7. The port of Python 2.6 has bugs with threading under FreeBSD.
-Everything else you should need is ported, in particular math/py-numpy and graphics/py-imaging.
+#. Install Python 3 if you don't already have it, for example from `the official Python website <https://www.python.org/downloads/mac-osx/>`_.
+#. Install PIP, e.g. with::
 
-You may need or want to add the line::
+    sudo easy-install pip
 
-    PYTHON_VERSION=2.7
+#. Install Pillow (overviewer needs PIL, Pillow is a fork of PIL that provides the same funcitonality)::
 
-to the file /etc/make.conf, but read the ports documentation to be sure of what this might do to other Python applications on your system.  
+    pip install Pillow
+
+#. Download the Pillow source files from https://github.com/python-pillow/Pillow/releases/latest and unpack the tar.gz file and move it to a directory you can remember
+#. Download the Minercaft Overviewer source-code from https://overviewer.org/builds/overviewer-latest.tar.gz
+#. Extract overviewer-[Version].tar.gz and move it to a directory you can remember
+#. Go into your Pillow-[Version] folder and navigate to the /src/libImaging directory
+#. Drag the following files from the Pillow-[Version]/src/libImaging folder to your overviewer-[Version] folder:
+  - ``Imaging.h``
+  - ``ImagingUtils.h``
+  - ``ImPlatform.h``
+#. Make sure your installation of Python 3 is in ``$PATH``
+#. In a terminal, change your current working directory to your overviewer-[Version] folder (e.g. by using ``cd Desktop/overviewer-[Version]``)
+#. Build::
+
+    PIL_INCLUDE_DIR="/path/to/Pillow-[version]/libImaging" python3 setup.py build
+
+You should now be able to run Overviewer with ``./overviewer.py`` inside of the
+Overviewer directory.

@@ -53,7 +53,7 @@ def log_other_exceptions(func):
             return func(*args)
         except ChunkDoesntExist:
             raise
-        except Exception, e:
+        except Exception as e:
             logging.exception("%s raised this exception", func.func_name)
             raise
     return newfunc
@@ -823,6 +823,13 @@ class RegionSet(object):
     def __repr__(self):
         return "<RegionSet regiondir=%r>" % self.regiondir
 
+    def __lt__(self, other):
+        """This garbage is only needed because genPOI wants to use
+        itertools.groupby, which needs sorted keys, and Python 2 somehow
+        just sorted objects like ???????? how????? why?????
+        """
+        return self.regiondir < other.regiondir
+
     def _get_block(self, palette_entry):
         wood_slabs = ('minecraft:oak_slab','minecraft:spruce_slab','minecraft:birch_slab','minecraft:jungle_slab',
                         'minecraft:acacia_slab','minecraft:dark_oak_slab','minecraft:petrified_oak_slab')
@@ -1261,7 +1268,7 @@ class RegionSet(object):
             try:
                 region = self._get_regionobj(regionfile)
                 data = region.load_chunk(x, z)
-            except nbt.CorruptionError, e:
+            except nbt.CorruptionError as e:
                 tries -= 1
                 if tries > 0:
                     # Flush the region cache to possibly read a new region file
@@ -1311,10 +1318,10 @@ class RegionSet(object):
                                                 "mobs_spawned", ""):
             raise ChunkDoesntExist("Chunk %s,%s doesn't exist" % (x,z))
 
-        # Turn the Biomes array into a 16x16 numpy arra
+        # Turn the Biomes array into a 16x16 numpy array
         if 'Biomes' in chunk_data and len(chunk_data['Biomes']) > 0:
             biomes = chunk_data['Biomes']
-            if isinstance(biomes, str):
+            if isinstance(biomes, bytes):
                 biomes = numpy.frombuffer(biomes, dtype=numpy.uint8)
             else:
                 biomes = numpy.asarray(biomes)
@@ -1385,7 +1392,7 @@ class RegionSet(object):
 
         """
 
-        for (regionx, regiony), (regionfile, filemtime) in self.regionfiles.iteritems():
+        for (regionx, regiony), (regionfile, filemtime) in self.regionfiles.items():
             try:
                 mcr = self._get_regionobj(regionfile)
             except nbt.CorruptRegionError:
@@ -1401,7 +1408,7 @@ class RegionSet(object):
 
         """
 
-        for (regionx, regiony), (regionfile, filemtime) in self.regionfiles.iteritems():
+        for (regionx, regiony), (regionfile, filemtime) in self.regionfiles.items():
             """ SKIP LOADING A REGION WHICH HAS NOT BEEN MODIFIED! """
             if (filemtime < mtime):
                 continue
@@ -1695,7 +1702,6 @@ def get_worlds():
     "Returns {world # or name : level.dat information}"
     ret = {}
     save_dir = get_save_dir()
-    loc = locale.getpreferredencoding()
 
     # No dirs found - most likely not running from inside minecraft-dir
     if not save_dir is None:
@@ -1705,14 +1711,15 @@ def get_worlds():
             if not os.path.exists(world_dat): continue
             try:
                 info = nbt.load(world_dat)[1]
-                info['Data']['path'] = os.path.join(save_dir, dir).decode(loc)
+                info['Data']['path'] = os.path.join(save_dir, dir)
                 if 'LevelName' in info['Data'].keys():
                     ret[info['Data']['LevelName']] = info['Data']
             except nbt.CorruptNBTError:
-                ret[os.path.basename(world_path).decode(loc) + " (corrupt)"] = {'path': world_path.decode(loc),
-                        'LastPlayed': 0,
-                        'Time': 0,
-                        'IsCorrupt': True}
+                ret[os.path.basename(world_path) + " (corrupt)"] = {
+                    'path': world_path,
+                    'LastPlayed': 0,
+                    'Time': 0,
+                    'IsCorrupt': True}
 
 
     for dir in os.listdir("."):
@@ -1721,11 +1728,11 @@ def get_worlds():
         world_path = os.path.join(".", dir)
         try:
             info = nbt.load(world_dat)[1]
-            info['Data']['path'] = world_path.decode(loc)
+            info['Data']['path'] = world_path
             if 'LevelName' in info['Data'].keys():
                 ret[info['Data']['LevelName']] = info['Data']
         except nbt.CorruptNBTError:
-            ret[os.path.basename(world_path).decode(loc) + " (corrupt)"] = {'path': world_path.decode(loc),
+            ret[os.path.basename(world_path) + " (corrupt)"] = {'path': world_path,
                     'LastPlayed': 0,
                     'Time': 0,
                     'IsCorrupt': True}

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 '''
 genPOI.py
@@ -24,11 +24,12 @@ import os
 import re
 import sys
 import time
-import urllib2
+import urllib.request
+import urllib.error
 from collections import defaultdict
 from contextlib import closing
 from multiprocessing import Pool
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 from overviewer_core import configParser, logger, nbt, world
 from overviewer_core.files import FileReplacer, get_fs_caps
@@ -77,7 +78,7 @@ def jsonText(s):
                     bar += foo["text"]
                 if "extra" in foo:
                     bar += parseLevel(foo["extra"])
-            elif isinstance(foo, basestring):
+            elif isinstance(foo, str):
                 bar = foo
             return bar
 
@@ -99,7 +100,7 @@ def initBucketChunks(config_path):
     mw_parser.parse(config_path)
     # ought not to fail since we already did it once
     config = mw_parser.get_validated_config()
-    for name, render in config['renders'].iteritems():
+    for name, render in config['renders'].items():
         for f in render['markers']:
             ff = f['filterFunction']
             bucketChunkFuncs[ff.__name__] = ff
@@ -109,8 +110,11 @@ def initBucketChunks(config_path):
 # see below for when this is called, and why we do this
 # a smarter way would be functools.partial, but that's broken on python 2.6
 # when used with multiprocessing
-def parseBucketChunks((bucket, rset, filters)):
+# TODO: Do the smarter way
+def parseBucketChunks(task_tuple):
     global bucketChunkFuncs
+
+    bucket, rset, filters = task_tuple
     pid = multiprocessing.current_process().pid
     markers = defaultdict(list)
 
@@ -139,7 +143,7 @@ def parseBucketChunks((bucket, rset, filters)):
             i = 0
             cnt = 250 + cnt
             logging.info("Found %d markers in thread %d so far at %d chunks.",
-                         sum(len(v) for v in markers.itervalues()), pid, cnt)
+                         sum(len(v) for v in markers.values()), pid, cnt)
 
     return markers
 
@@ -190,7 +194,7 @@ def handleEntities(rset, config, config_path, filters, markers):
         buckets = [[] for i in range(numbuckets)]
 
         for (x, z, mtime) in rset.iterate_chunks():
-            i = x / 32 + z / 32
+            i = x // 32 + z // 32
             i = i % numbuckets
             buckets[i].append([x, z])
 
@@ -209,7 +213,7 @@ def handleEntities(rset, config, config_path, filters, markers):
         logging.info("All the threads completed.")
 
         for marker_dict in results:
-            for name, marker_list in marker_dict.iteritems():
+            for name, marker_list in marker_dict.items():
                 markers[name]['raw'].extend(marker_list)
 
     logging.info("Done.")
@@ -226,7 +230,7 @@ class PlayerDict(dict):
         if os.path.exists(cache_file):
             try:
                 with closing(gzip.GzipFile(cache_file)) as gz:
-                    cls.uuid_cache = json.load(gz)
+                    cls.uuid_cache = json.loads(gz.read().decode("utf-8"))
                     logging.info("Loaded UUID cache from %r with %d entries.",
                                  cache_file, len(cls.uuid_cache.keys()))
             except (ValueError, IOError):
@@ -252,13 +256,13 @@ class PlayerDict(dict):
 
         with FileReplacer(cache_file, caps) as cache_file_name:
             with closing(gzip.GzipFile(cache_file_name, "wb")) as gz:
-                json.dump(cls.uuid_cache, gz)
+                gz.write(json.dumps(cls.uuid_cache).encode())
                 logging.info("Wrote UUID cache with %d entries.",
                              len(cls.uuid_cache.keys()))
 
     def __getitem__(self, item):
         if item == "EntityId":
-            if not super(PlayerDict, self).has_key("EntityId"):
+            if "EntityId" not in self:
                 if self.use_uuid:
                     super(PlayerDict, self).__setitem__("EntityId", self.get_name_from_uuid())
                 else:
@@ -275,12 +279,12 @@ class PlayerDict(dict):
             pass
 
         try:
-            profile = json.loads(urllib2.urlopen(UUID_LOOKUP_URL + sname).read())
+            profile = json.loads(urllib.request.urlopen(UUID_LOOKUP_URL + sname).read().decode("utf-8"))
             if 'name' in profile:
                 profile['retrievedAt'] = time.mktime(time.localtime())
                 PlayerDict.uuid_cache[sname] = profile
                 return profile['name']
-        except (ValueError, urllib2.URLError):
+        except (ValueError, urllib.error.URLError):
             logging.warning("Unable to get player name for UUID %s.", self._name)
 
 
@@ -400,7 +404,7 @@ def create_marker_from_filter_result(poi, result):
         d["createInfoWindow"] = poi['createInfoWindow']
 
     # Fill in the rest from result
-    if isinstance(result, basestring):
+    if isinstance(result, str):
         d.update(dict(text=result, hovertext=result))
     elif isinstance(result, tuple):
         d.update(dict(text=result[1], hovertext=result[0]))
@@ -410,7 +414,7 @@ def create_marker_from_filter_result(poi, result):
 
         # Use custom hovertext if provided...
         if 'hovertext' in result:
-            d['hovertext'] = unicode(result['hovertext'])
+            d['hovertext'] = str(result['hovertext'])
         else:   # ...otherwise default to display text.
             d['hovertext'] = result['text']
 
@@ -419,7 +423,7 @@ def create_marker_from_filter_result(poi, result):
             for point in result['polyline']:
                 # point.copy() would work, but this validates better
                 d['polyline'].append(dict(x=point['x'], y=point['y'], z=point['z']))
-            if isinstance(result['color'], basestring):
+            if isinstance(result['color'], str):
                 d['strokeColor'] = result['color']
 
             if "icon" in result:
@@ -434,37 +438,33 @@ def create_marker_from_filter_result(poi, result):
 
 
 def main():
-
-    if os.path.basename(sys.argv[0]) == """genPOI.py""":
-        helptext = """genPOI.py
-            %prog --config=<config file> [options]"""
+    if os.path.basename(sys.argv[0]) == "genPOI.py":
+        prog_name = "genPOI.py"
     else:
-        helptext = """genPOI
-            %prog --genpoi --config=<config file> [options]"""
-
+        prog_name = sys.argv[0] + " --genpoi"
     logger.configure()
 
-    parser = OptionParser(usage=helptext)
-    parser.add_option("-c", "--config", dest="config", action="store",
-                      help="Specify the config file to use.")
-    parser.add_option("-q", "--quiet", dest="quiet", action="count",
-                      help="Reduce logging output")
-    parser.add_option("--skip-scan", dest="skipscan", action="store_true",
-                      help="Skip scanning for entities when using GenPOI")
-    parser.add_option("--skip-players", dest="skipplayers", action="store_true",
-                      help="Skip getting player data when using GenPOI")
+    parser = ArgumentParser(prog=prog_name)
+    parser.add_argument("-c", "--config", dest="config", action="store", required=True,
+                        help="Specify the config file to use.")
+    parser.add_argument("-q", "--quiet", dest="quiet", action="count",
+                        help="Reduce logging output")
+    parser.add_argument("--skip-scan", dest="skipscan", action="store_true",
+                        help="Skip scanning for entities when using GenPOI")
+    parser.add_argument("--skip-players", dest="skipplayers", action="store_true",
+                        help="Skip getting player data when using GenPOI")
 
-    options, args = parser.parse_args()
-    if not options.config:
-        parser.print_help()
-        return
+    args = parser.parse_args()
 
-    if options.quiet > 0:
+    if args.quiet and args.quiet > 0:
         logger.configure(logging.WARN, False)
 
     # Parse the config file
     mw_parser = configParser.MultiWorldParser()
-    mw_parser.parse(options.config)
+    try:
+        mw_parser.parse(args.config)
+    except configParser.MissingConfigException:
+        parser.error("The configuration file '{}' does not exist.".format(args.config))
     try:
         config = mw_parser.get_validated_config()
     except Exception:
@@ -479,7 +479,7 @@ def main():
     marker_groups = defaultdict(list)
 
     # collect all filters and get regionsets
-    for rname, render in config['renders'].iteritems():
+    for rname, render in config['renders'].items():
         # Convert render['world'] to the world path, and store the original
         # in render['worldname_orig']
         try:
@@ -528,16 +528,16 @@ def main():
                    for name, filter_name, __, __, __, __ in filters)
 
     # apply filters to regionsets
-    if not options.skipscan:
+    if not args.skipscan:
         # group filters by rset
         def keyfunc(x):
             return x[3]
         sfilters = sorted(filters, key=keyfunc)
         for rset, rset_filters in itertools.groupby(sfilters, keyfunc):
-            handleEntities(rset, config, options.config, list(rset_filters), markers)
+            handleEntities(rset, config, args.config, list(rset_filters), markers)
 
     # apply filters to players
-    if not options.skipplayers:
+    if not args.skipplayers:
         PlayerDict.load_cache(destdir)
 
         # group filters by worldpath, so we only search for players once per
@@ -561,7 +561,7 @@ def main():
     logging.info("Done handling POIs")
     logging.info("Writing out javascript files")
 
-    if not options.skipplayers:
+    if not args.skipplayers:
         PlayerDict.save_cache(destdir)
 
     with open(os.path.join(destdir, "markersDB.js"), "w") as output:

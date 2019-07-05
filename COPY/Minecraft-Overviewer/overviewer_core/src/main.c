@@ -17,7 +17,7 @@
 
 #include "overviewer.h"
 
-PyObject *get_extension_version(PyObject *self, PyObject *args) {
+PyObject* get_extension_version(PyObject* self, PyObject* args) {
 
     return Py_BuildValue("i", OVERVIEWER_EXTENSION_VERSION);
 }
@@ -25,25 +25,30 @@ PyObject *get_extension_version(PyObject *self, PyObject *args) {
 static PyMethodDef COverviewerMethods[] = {
     {"alpha_over", alpha_over_wrap, METH_VARARGS,
      "alpha over composite function"},
-    
+
     {"resize_half", resize_half_wrap, METH_VARARGS,
      "downscale image to half size"},
-    
+
     {"render_loop", chunk_render, METH_VARARGS,
      "Renders stuffs"},
-    
-    {"extension_version", get_extension_version, METH_VARARGS, 
-        "Returns the extension version"},
-    
-    {NULL, NULL, 0, NULL}       /* Sentinel */
+
+    {"extension_version", get_extension_version, METH_VARARGS,
+     "Returns the extension version"},
+
+    {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
+static PyModuleDef COverviewerModule = {
+    PyModuleDef_HEAD_INIT,
+    "c_overviewer",
+    "", // TODO: Add documentation here.
+    -1,
+    COverviewerMethods};
 
 PyMODINIT_FUNC
-initc_overviewer(void)
-{
+PyInit_c_overviewer(void) {
     PyObject *mod, *numpy;
-    mod = Py_InitModule("c_overviewer", COverviewerMethods);
+    mod = PyModule_Create(&COverviewerModule);
 
     /* for numpy
        normally you should use import_array(), but that will break across
@@ -57,8 +62,9 @@ initc_overviewer(void)
     if (!init_chunk_render()) {
         PyErr_Print();
         exit(1);
-        return;
+        return NULL;
     }
 
     init_endian();
+    return mod;
 }

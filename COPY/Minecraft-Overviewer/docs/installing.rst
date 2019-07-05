@@ -49,7 +49,22 @@ you're all set! See you at the :doc:`running` page!
 
 CentOS / RHEL / Fedora
 ======================
-We also provide a RPM repository with pre-built packages for users on RPM-based
+Prerequisites for CentOS/RHEL 7
+--------------------------
+Enable EPEL to get a release of Python 3::
+
+    yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+The `official instructions <https://fedoraproject.org/wiki/EPEL>`_ also recommend enabling a few
+additional repositories, as some EPEL packages may depend on them. **However, this is only relevant
+if you are not using CentOS**::
+
+    subscription-manager repos --enable "rhel-*-optional-rpms" --enable "rhel-*-extras-rpms"  --enable "rhel-ha-for-rhel-*-server-rpms"
+
+
+Installing the Overviewer
+-------------------------
+We provide a RPM repository with pre-built packages for users on RPM-based
 distros. To add the Overviewer repository to YUM, just run
 
 ::
