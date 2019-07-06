@@ -1,6 +1,6 @@
 # Docker Overviewer 1.14.X
 
-Tutorial (german) https://marc.tv/wie-generiere-ich-isometrische-karten-fuer-minecraft-mit-docker-und-synology/
+Tutorial (german) https://marc.tv/overviewer-minecraft-docker-synology/
 
 ## Example
 
