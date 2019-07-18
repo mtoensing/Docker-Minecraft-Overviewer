@@ -128,7 +128,6 @@ top-level directory.
         dump['map']['debug'] = True
         dump['map']['cacheTag'] = str(int(time.time()))
         dump['map']['north_direction'] = 'lower-left'   # only temporary
-        dump['map']['center'] = [-314, 67, 94]
         dump['map']['controls'] = {
             'pan': True,
             'zoom': True,
@@ -166,14 +165,14 @@ top-level directory.
                                      "overviewer_core", "data", "web_assets")
         if not os.path.isdir(global_assets):
             global_assets = os.path.join(util.get_program_path(), "web_assets")
-        mirror_dir(global_assets, self.outputdir, capabilities=self.fs_caps)
+        mirror_dir(global_assets, self.outputdir, capabilities=self.fs_caps, force_writable=True)
 
         if self.custom_assets_dir:
             # We could have done something fancy here rather than just
             # overwriting the global files, but apparently this what we used to
             # do pre-rewrite.
-            mirror_dir(self.custom_assets_dir, self.outputdir,
-                       capabilities=self.fs_caps)
+            mirror_dir(self.custom_assets_dir, self.outputdir, capabilities=self.fs_caps,
+                       force_writable=True)
 
         # write a dummy baseMarkers.js if none exists
         basemarkers_path = os.path.join(self.outputdir, "baseMarkers.js")

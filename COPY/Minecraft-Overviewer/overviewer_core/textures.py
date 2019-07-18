@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License along
 #    with the Overviewer.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import OrderedDict
 import sys
 import imp
 import os
@@ -86,8 +87,7 @@ class Textures(object):
         self.texture_cache = {}
 
         # once we find a jarfile that contains a texture, we cache the ZipFile object here
-        self.jar = None
-        self.jarpath = ""
+        self.jars = OrderedDict()
     
     ##
     ## pickle support
@@ -101,7 +101,7 @@ class Textures(object):
                 del attributes[attr]
             except KeyError:
                 pass
-        attributes['jar'] = None
+        attributes['jars'] = OrderedDict()
         return attributes
     def __setstate__(self, attrs):
         # regenerate textures, if needed
@@ -116,6 +116,17 @@ class Textures(object):
     ##
     
     def generate(self):
+        # Make sure we have the foliage/grasscolor images available
+        try:
+            self.load_foliage_color()
+            self.load_grass_color()
+        except TextureException as e:
+            logging.error(
+                "Your system is missing either assets/minecraft/textures/colormap/foliage.png "
+                "or assets/minecraft/textures/colormap/grass.png. Either complement your "
+                "resource pack with these texture files, or install the vanilla Minecraft "
+                "client to use as a fallback.")
+            raise e
         
         # generate biome grass mask
         self.biome_grass_texture = self.build_block(self.load_image_texture("assets/minecraft/textures/block/grass_block_top.png"), self.load_image_texture("assets/minecraft/textures/block/grass_block_side_overlay.png"))
@@ -151,8 +162,8 @@ class Textures(object):
         """Searches for the given file and returns an open handle to it.
         This searches the following locations in this order:
         
+        * In the directory textures_path given in the initializer if not already open
         * In an already open resource pack or client jar file
-        * In the directory textures_path given in the initializer
         * In the resource pack given by textures_path
         * The program dir (same dir as overviewer.py) for extracted textures
         * On Darwin, in /Applications/Minecraft for extracted textures
@@ -171,25 +182,11 @@ class Textures(object):
         """
         if verbose: logging.info("Starting search for {0}".format(filename))
 
-        # we've sucessfully loaded something from here before, so let's quickly try
-        # this before searching again
-        if self.jar is not None:
-            try:
-                self.jar.getinfo(filename)
-                if verbose: logging.info("Found (cached) %s in '%s'", filename, self.jarpath)
-                return self.jar.open(filename)
-            except (KeyError, IOError) as e:
-                pass
-
         # A texture path was given on the command line. Search this location
         # for the file first.
         if self.find_file_local_path:
-            if os.path.isdir(self.find_file_local_path):
-                full_path = os.path.join(self.find_file_local_path, filename)
-                if os.path.isfile(full_path):
-                        if verbose: logging.info("Found %s in '%s'", filename, full_path)
-                        return open(full_path, mode)
-            elif os.path.isfile(self.find_file_local_path):
+            if (self.find_file_local_path not in self.jars
+                and os.path.isfile(self.find_file_local_path)):
                 # Must be a resource pack. Look for the requested file within
                 # it.
                 try:
@@ -199,9 +196,28 @@ class Textures(object):
                     pack.getinfo(filename)
                     if verbose: logging.info("Found %s in '%s'", filename,
                                              self.find_file_local_path)
-                    self.jar, self.jarpath = pack, self.find_file_local_path
+                    self.jars[self.find_file_local_path] = pack
+                    # ok cool now move this to the start so we pick it first
+                    self.jars.move_to_end(self.find_file_local_path, last=False)
                     return pack.open(filename)
                 except (zipfile.BadZipfile, KeyError, IOError):
+                    pass
+            elif os.path.isdir(self.find_file_local_path):
+                full_path = os.path.join(self.find_file_local_path, filename)
+                if os.path.isfile(full_path):
+                        if verbose: logging.info("Found %s in '%s'", filename, full_path)
+                        return open(full_path, mode)
+
+        # We already have some jars open, better use them.
+        if len(self.jars) > 0:
+            for jarpath in self.jars:
+                try:
+                    jar = self.jars[jarpath]
+                    jar.getinfo(filename)
+                    if verbose: logging.info("Found (cached) %s in '%s'", filename,
+                                             jarpath)
+                    return jar.open(filename)
+                except (KeyError, IOError) as e:
                     pass
 
         # If we haven't returned at this point, then the requested file was NOT
@@ -283,7 +299,7 @@ class Textures(object):
                 try:
                     jar.getinfo(filename)
                     if verbose: logging.info("Found %s in '%s'", filename, jarpath)
-                    self.jar, self.jarpath = jar, jarpath
+                    self.jars[jarpath] = jar
                     return jar.open(filename)
                 except (KeyError, IOError) as e:
                     pass
@@ -1875,8 +1891,9 @@ def fire(self, blockid, data):
 # monster spawner
 block(blockid=52, top_image="assets/minecraft/textures/block/spawner.png", transparent=True)
 
-# wooden, cobblestone, red brick, stone brick, netherbrick, sandstone, spruce, birch, jungle, quartz, red sandstone and (dark) prismarine stairs.
-@material(blockid=[53,67,108,109,114,128,134,135,136,156,163,164,180,203,11337,11338,11339], data=list(range(128)), transparent=True, solid=True, nospawn=True)
+# wooden, cobblestone, red brick, stone brick, netherbrick, sandstone, spruce, birch, jungle, quartz, red sandstone, (dark) prismarine, mossy brick and mossy cobblestone stairs.
+@material(blockid=[53,67,108,109,114,128,134,135,136,156,163,164,180,203,11337,11338,11339,
+                   11370, 11371], data=list(range(128)), transparent=True, solid=True, nospawn=True)
 def stairs(self, blockid, data):
     # preserve the upside-down bit
     upside_down = data & 0x4
@@ -1889,40 +1906,29 @@ def stairs(self, blockid, data):
     numpy.roll(quarters, [0,1,3,2][self.rotation])
     nw,ne,se,sw = quarters
 
-    if blockid == 53: # wooden
-        texture = self.load_image_texture("assets/minecraft/textures/block/oak_planks.png").copy()
-    elif blockid == 67: # cobblestone
-        texture = self.load_image_texture("assets/minecraft/textures/block/cobblestone.png").copy()
-    elif blockid == 108: # red brick stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/bricks.png").copy()
-    elif blockid == 109: # stone brick stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/stone_bricks.png").copy()
-    elif blockid == 114: # netherbrick stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/nether_bricks.png").copy()
-    elif blockid == 128: # sandstone stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/sandstone.png").copy()
-    elif blockid == 134: # spruce wood stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/spruce_planks.png").copy()
-    elif blockid == 135: # birch wood  stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/birch_planks.png").copy()
-    elif blockid == 136: # jungle good stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/jungle_planks.png").copy()
-    elif blockid == 156: # quartz block stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/quartz_block_side.png").copy()
-    elif blockid == 163: # acacia wood stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/acacia_planks.png").copy()
-    elif blockid == 164: # dark oak stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/dark_oak_planks.png").copy()
-    elif blockid == 180: # red sandstone stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/red_sandstone.png").copy()
-    elif blockid == 203: # purpur stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/purpur_block.png").copy()
-    elif blockid == 11337: # prismarine stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/prismarine.png").copy()
-    elif blockid == 11338: # dark prismarine stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/dark_prismarine.png").copy()
-    elif blockid == 11339: # prismarine brick stairs
-        texture = self.load_image_texture("assets/minecraft/textures/block/prismarine_bricks.png").copy()
+    stair_id_to_tex = {
+        53: "assets/minecraft/textures/block/oak_planks.png",
+        67: "assets/minecraft/textures/block/cobblestone.png",
+        108: "assets/minecraft/textures/block/bricks.png",
+        109: "assets/minecraft/textures/block/stone_bricks.png",
+        114: "assets/minecraft/textures/block/nether_bricks.png",
+        128: "assets/minecraft/textures/block/sandstone.png",
+        134: "assets/minecraft/textures/block/spruce_planks.png",
+        135: "assets/minecraft/textures/block/birch_planks.png",
+        136: "assets/minecraft/textures/block/jungle_planks.png",
+        156: "assets/minecraft/textures/block/quartz_block_side.png",
+        163: "assets/minecraft/textures/block/acacia_planks.png",
+        164: "assets/minecraft/textures/block/dark_oak_planks.png",
+        180: "assets/minecraft/textures/block/red_sandstone.png",
+        203: "assets/minecraft/textures/block/purpur_block.png",
+        11337: "assets/minecraft/textures/block/prismarine.png",
+        11338: "assets/minecraft/textures/block/dark_prismarine.png",
+        11339: "assets/minecraft/textures/block/prismarine_bricks.png",
+        11370: "assets/minecraft/textures/block/mossy_stone_bricks.png",
+        11371: "assets/minecraft/textures/block/mossy_cobblestone.png",
+    }
+
+    texture = self.load_image_texture(stair_id_to_tex[blockid]).copy()
 
     outside_l = texture.copy()
     outside_r = texture.copy()
@@ -2326,6 +2332,58 @@ def smithing_table(self, blockid, data):
 
     img = self.build_full_block(top, None, None, side3, side4, None)
     return img
+
+@material(blockid=11362, solid=True, nodata=True)
+def blast_furnace(self, blockid, data):
+    top = self.load_image_texture("assets/minecraft/textures/block/blast_furnace_top.png")
+    side3 = self.load_image_texture("assets/minecraft/textures/block/blast_furnace_side.png")
+    side4 = self.load_image_texture("assets/minecraft/textures/block/blast_furnace_front.png")
+
+    img = self.build_full_block(top, None, None, side3, side4, None)
+    return img
+
+@material(blockid=11364, solid=True, nodata=True)
+def smoker(self, blockid, data):
+    top = self.load_image_texture("assets/minecraft/textures/block/smoker_top.png")
+    side3 = self.load_image_texture("assets/minecraft/textures/block/smoker_side.png")
+    side4 = self.load_image_texture("assets/minecraft/textures/block/smoker_front.png")
+
+    img = self.build_full_block(top, None, None, side3, side4, None)
+    return img
+
+@material(blockid=11366, solid=True, nodata=True)
+def lectern(self, blockid, data):
+    top = self.load_image_texture("assets/minecraft/textures/block/lectern_top.png")
+    side3 = self.load_image_texture("assets/minecraft/textures/block/lectern_sides.png")
+    side4 = self.load_image_texture("assets/minecraft/textures/block/lectern_front.png")
+
+    img = self.build_full_block(top, None, None, side3, side4, None)
+    return img
+
+@material(blockid=11367, solid=True, nodata=True)
+def loom(self, blockid, data):
+    top = self.load_image_texture("assets/minecraft/textures/block/loom_top.png")
+    side3 = self.load_image_texture("assets/minecraft/textures/block/loom_side.png")
+    side4 = self.load_image_texture("assets/minecraft/textures/block/loom_front.png")
+
+    img = self.build_full_block(top, None, None, side3, side4, None)
+    return img
+
+@material(blockid=11368, solid=True, nodata=True)
+def stonecutter(self, blockid, data):
+    top = self.load_image_texture("assets/minecraft/textures/block/stonecutter_top.png")
+    side3 = side4 = self.load_image_texture("assets/minecraft/textures/block/stonecutter_side.png")
+
+    img = self.build_full_block(top, None, None, side3, side4, None)
+    return img
+
+@material(blockid=11369, solid=True, nodata=True)
+def grindstone(self, blockid, data):
+    top = side3 = side4 = self.load_image_texture("assets/minecraft/textures/block/grindstone_side.png")
+
+    img = self.build_full_block(top, None, None, side3, side4, None)
+    return img
+
 
 # crops with 8 data values (like wheat)
 @material(blockid=59, data=list(range(8)), transparent=True, nospawn=True)
@@ -4243,13 +4301,16 @@ def beacon(self, blockid, data):
     
     return img
 
-# cobblestone and mossy cobblestone walls, chorus plants
+# cobblestone and mossy cobblestone walls, chorus plants, mossy stone brick walls
 # one additional bit of data value added for mossy and cobblestone
-@material(blockid=[139, 199], data=list(range(32)), transparent=True, nospawn=True)
+@material(blockid=[139, 199, 11372], data=list(range(32)), transparent=True, nospawn=True)
 def cobblestone_wall(self, blockid, data):
     # chorus plants
     if blockid == 199:
         t = self.load_image_texture("assets/minecraft/textures/block/chorus_plant.png").copy()
+    # mossy stone bricks
+    elif blockid == 11372:
+        t = self.load_image_texture("assets/minecraft/textures/block/mossy_stone_bricks.png").copy()
     # no rotation, uses pseudo data
     elif data & 0b10000 == 0:
         # cobblestone

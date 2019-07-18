@@ -134,7 +134,7 @@ class World(object):
             if mcas:
                 # construct a regionset object for this
                 rel = os.path.relpath(root, self.worlddir)
-                if rel != "poi":
+                if os.path.basename(rel) != "poi":
                     rset = RegionSet(root, rel)
                     if root == os.path.join(self.worlddir, "region"):
                         self.regionsets.insert(0, rset)
@@ -799,6 +799,15 @@ class RegionSet(object):
             "minecraft:fletching_table": (11359, 0),
             "minecraft:cartography_table": (11360, 0),
             "minecraft:smithing_table": (11361, 0),
+            "minecraft:blast_furnace": (11362, 0),
+            "minecraft:smoker": (11364, 0),
+            "minecraft:lectern": (11366, 0),
+            "minecraft:loom": (11367, 0),
+            "minecraft:stonecutter": (11368, 0),
+            "minecraft:grindstone": (11369, 0),
+            "minecraft:mossy_stone_brick_stairs": (11370, 0),
+            "minecraft:mossy_cobblestone_stairs": (11371, 0),
+            "minecraft:mossy_stone_brick_wall": (11372, 0),
         }
 
         colors = [   'white', 'orange', 'magenta', 'light_blue',
@@ -1164,39 +1173,25 @@ class RegionSet(object):
     def _get_blockdata_v113(self, section, unrecognized_block_types):
         # Translate each entry in the palette to a 1.2-era (block, data) int pair.
         num_palette_entries = len(section['Palette'])
-        palette_translated = [] # (block, data) pairs, num_palette_entries in length
-        palette_block_counts = [] # ints, num_palette_entries in length
-        unrecognized_palette_entries = []
+        translated_blocks = numpy.zeros((num_palette_entries,), dtype=numpy.uint16) # block IDs
+        translated_data = numpy.zeros((num_palette_entries,), dtype=numpy.uint8) # block data
         for i in range(num_palette_entries):
             key = section['Palette'][i]
-            palette_block_counts.append(0)
             try:
-                palette_translated.append(self._get_block(key))
-            except KeyError as e:
-                # Unknown block type? Track it, treat it as air, and move on.
-                unrecognized_palette_entries.append(i)
-                palette_translated.append(self._blockmap['minecraft:air'])
+                translated_blocks[i], translated_data[i] = self._get_block(key)
+            except KeyError:
+                pass    # We already have initialised arrays with 0 (= air)
 
         # Turn the BlockStates array into a 16x16x16 numpy matrix of shorts.
-        blocks = numpy.zeros((4096,), dtype=numpy.uint16)
-        data = numpy.zeros((4096,), dtype=numpy.uint8)
+        blocks = numpy.empty((4096,), dtype=numpy.uint16)
+        data = numpy.empty((4096,), dtype=numpy.uint8)
         block_states = self._packed_longarray_to_shorts(section['BlockStates'], 4096)
-        for i in range(4096):
-            palette_index = block_states[i]
-            (blocks[i], data[i]) = palette_translated[palette_index]
-            palette_block_counts[palette_index] += 1
+        blocks[:] = translated_blocks[block_states]
+        data[:] = translated_data[block_states]
 
         # Turn the Data array into a 16x16x16 matrix, same as SkyLight
         blocks  = blocks.reshape((16, 16, 16))
         data = data.reshape((16, 16, 16))
-
-        for i in unrecognized_palette_entries:
-            if palette_block_counts[i] > 0:
-                palette_entry = section['Palette'][i]
-                k = palette_entry['Name']
-                if 'Properties' in palette_entry:
-                    k += " %s" % str(palette_entry['Properties'])
-                unrecognized_block_types[k] = unrecognized_block_types.get(k, 0) + palette_block_counts[i]
 
         return (blocks, data)
 
@@ -1482,6 +1477,15 @@ class RegionSetWrapper(object):
     """
     def __init__(self, rsetobj):
         self._r = rsetobj
+
+    def __lt__(self, other):
+        """This garbage is only needed because genPOI wants to use
+        itertools.groupby, which needs sorted keys, and Python 2 somehow
+        just sorted objects like ???????? how????? why?????
+        """
+        if isinstance(other, RegionSetWrapper):
+            other = other._r
+        return self._r.regiondir < other.regiondir
 
     def get_type(self):
         return self._r.get_type()
