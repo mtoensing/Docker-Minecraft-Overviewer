@@ -432,12 +432,23 @@ class RegionSet(object):
             'minecraft:farmland': (60, 0),
             'minecraft:furnace': (61, 0),
             'minecraft:sign': (63, 0),
+            'minecraft:oak_sign': (11401, 0),
+            'minecraft:spruce_sign': (11402, 0),
+            'minecraft:birch_sign': (11403, 0),
+            'minecraft:jungle_sign': (11404, 0),
+            'minecraft:acacia_sign': (11405, 0),
+            'minecraft:dark_oak_sign': (11406, 0),
             'minecraft:oak_door': (64, 0),
             'minecraft:ladder': (65, 0),
             'minecraft:rail': (66, 0),
-            'minecraft:stone_stairs': (67, 0),
             'minecraft:cobblestone_stairs': (67, 0),
             'minecraft:wall_sign': (68, 0),
+            'minecraft:oak_wall_sign': (11407, 0),
+            'minecraft:spruce_wall_sign': (11408, 0),
+            'minecraft:birch_wall_sign': (11409, 0),
+            'minecraft:jungle_wall_sign': (11410, 0),
+            'minecraft:acacia_wall_sign': (11411, 0),
+            'minecraft:dark_oak_wall_sign': (11412, 0),
             'minecraft:lever': (69, 0),
             'minecraft:stone_pressure_plate': (70, 0),
             'minecraft:iron_door': (71, 0),
@@ -808,6 +819,18 @@ class RegionSet(object):
             "minecraft:mossy_stone_brick_stairs": (11370, 0),
             "minecraft:mossy_cobblestone_stairs": (11371, 0),
             "minecraft:mossy_stone_brick_wall": (11372, 0),
+            "minecraft:lantern": (11373, 0),
+            "minecraft:smooth_sandstone_stairs": (11374, 0),
+            'minecraft:smooth_quartz_stairs': (11375, 0),
+            'minecraft:polished_granite_stairs': (11376, 0),
+            'minecraft:polished_diorite_stairs': (11377, 0),
+            'minecraft:polished_andesite_stairs': (11378, 0),
+            'minecraft:stone_stairs': (11379, 0),
+            'minecraft:granite_stairs': (11380, 0),
+            'minecraft:diorite_stairs': (11381, 0),
+            'minecraft:andesite_stairs': (11382, 0),
+            'minecraft:end_stone_brick_stairs': (11383, 0),
+            'minecraft:red_nether_brick_stairs': (11384, 0),
         }
 
         colors = [   'white', 'orange', 'magenta', 'light_blue',
@@ -868,7 +891,7 @@ class RegionSet(object):
                 data += 4
         elif key.endswith('rail'):
             shape = palette_entry['Properties']['shape']
-            data = {'north_south':0, 'east_west': 1, 'ascending_east': 2, 'ascending_west': 3, 'ascending_north': 4, 'ascending_south': 5, 'south_west': 6, 'south_east': 7, 'north_east': 8, 'north_west': 9}[shape]
+            data = {'north_south':0, 'east_west': 1, 'ascending_east': 2, 'ascending_west': 3, 'ascending_north': 4, 'ascending_south': 5, 'south_east': 6, 'south_west': 7, 'north_west': 8, 'north_east': 9}[shape]
             if key == 'minecraft:powered_rail' and palette_entry['Properties']['powered'] == 'true':
                 data |= 8
         elif key in ['minecraft:comparator', 'minecraft:repeater']:
@@ -898,7 +921,7 @@ class RegionSet(object):
                     if key == 'minecraft:stone_brick_slab':
                         block = 98
                     elif key == 'minecraft:stone_slab':
-                        block = 43      # block_double_stone_slab
+                        block = 1      # stone data 0
                     elif key == 'minecraft:cobblestone_slab':
                         block = 4       # cobblestone
                     elif key == 'minecraft:sandstone_slab':
@@ -1040,15 +1063,16 @@ class RegionSet(object):
             if facing == 'west':  data += 1
             if facing == 'north': data += 2
             if facing == 'east':  data += 3
-        elif key == 'minecraft:sign':
-            p = palette_entry['Properties']
-            data = p['rotation']
-        elif key == 'minecraft:wall_sign':
-            facing = palette_entry['Properties']['facing']
-            if   facing == 'north': data = 2
-            elif facing == 'west':  data = 4
-            elif facing == 'south': data = 3
-            elif facing == 'east':  data = 5
+        elif key.endswith('sign'):
+            if key.endswith('wall_sign'):
+                facing = palette_entry['Properties']['facing']
+                if   facing == 'north': data = 2
+                elif facing == 'west':  data = 4
+                elif facing == 'south': data = 3
+                elif facing == 'east':  data = 5
+            else:
+                p = palette_entry['Properties']
+                data = p['rotation']
         elif key.endswith('_fence'):
             p = palette_entry['Properties']
             if p['north'] == 'true': data |= 1
@@ -1081,6 +1105,11 @@ class RegionSet(object):
         elif key in ['minecraft:beetroots', 'minecraft:melon_stem', 'minecraft:wheat',
                      'minecraft:pumpkin_stem', 'minecraft:potatoes', 'minecraft:carrots']:
             data = palette_entry['Properties']['age']
+        elif key == 'minecraft:lantern':
+            if palette_entry['Properties']['hanging'] == 'true':
+                data = 1
+            else:
+                data = 0
         return (block, data)
 
     def get_type(self):

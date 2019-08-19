@@ -86,7 +86,7 @@ Let's take a closer look at the ``overviewer_core/`` directory:
 * ``cache.py`` implements a Least-Recently-Used (LRU) cache, which is used for
   caching chunks in memory as the rendering happens.
 
-* ``configParser.py`` contains some code that sets up how the config is parsed,
+* ``config_parser.py`` contains some code that sets up how the config is parsed,
   but is not really involved in the definitions of individual settings therein.
 
 * ``dispatcher.py`` is the code that sets up multiprocessing, so Overviewer can
@@ -165,7 +165,7 @@ to stick to PEP8_ when writing new code. If you're refactoring old code, it
 would be great if you were to fix it to make it PEP8 compliant as well.
 
 To check whether the code is PEP8 compliant, you can use pycodestyle_. You can
-easily install it with pip by using ``pip2 install pycodestyle``.
+easily install it with pip by using ``pip3 install pycodestyle``.
 
 .. _PEP8: https://www.python.org/dev/peps/pep-0008/
 .. _pycodestyle: https://pypi.python.org/pypi/pycodestyle

@@ -1,7 +1,7 @@
 import unittest
 from collections import OrderedDict
 
-from overviewer_core import configParser
+from overviewer_core import config_parser
 from overviewer_core.settingsValidators import ValidationException
 
 from overviewer_core import world
@@ -11,11 +11,11 @@ from overviewer_core import rendermodes
 class SettingsTest(unittest.TestCase):
     
     def setUp(self):
-        self.s = configParser.MultiWorldParser()
+        self.s = config_parser.MultiWorldParser()
     
     def test_missing(self):
         "Validates that a non-existant settings.py causes an exception"
-        self.assertRaises(configParser.MissingConfigException, self.s.parse, "doesnotexist.py")
+        self.assertRaises(config_parser.MissingConfigException, self.s.parse, "doesnotexist.py")
 
     def test_existing_file(self):
         self.s.parse("test/data/settings/settings_test_1.py")
@@ -41,7 +41,7 @@ class SettingsTest(unittest.TestCase):
         to do it from a file
         
         """
-        fromfile = configParser.MultiWorldParser()
+        fromfile = config_parser.MultiWorldParser()
         fromfile.parse("test/data/settings/settings_test_1.py")
 
         self.s.set_config_item("worlds", {
@@ -63,7 +63,11 @@ class SettingsTest(unittest.TestCase):
                 }),
             ]))
         self.s.set_config_item("outputdir", "/tmp/fictional/outputdir")
-        self.assertEqual(fromfile.get_validated_config(), self.s.get_validated_config())
+        first = fromfile.get_validated_config()
+        del first["observer"]
+        second = self.s.get_validated_config()
+        del second["observer"]
+        self.assertEqual(first, second)
 
     def test_rendermode_string(self):
         self.s.set_config_item("worlds", {

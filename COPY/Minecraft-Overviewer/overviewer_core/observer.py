@@ -73,7 +73,7 @@ class Observer(object):
     def get_percentage(self):
         """Get the current progress percentage. Assumes 100% if max_value is 0
         """
-        if self.get_max_value() is 0:
+        if self.get_max_value() == 0:
             return 100.0
         else:
             return self.get_current_value() * 100.0 / self.get_max_value()
@@ -231,7 +231,7 @@ class JSObserver(Observer):
         self.last_update = -11
         self.last_update_time = -1
         self._current_value = -1
-        self.minrefresh = 1000*minrefresh
+        self.minrefresh = 1000 * minrefresh
         self.json = dict()
 
         # function to print formatted eta
@@ -349,7 +349,7 @@ class JSObserver(Observer):
     def get_percentage(self):
         """Get the current progress percentage. Assumes 100% if max_value is 0
         """
-        if self.get_max_value() is 0:
+        if self.get_max_value() == 0:
             return 100.0
         else:
             return self.get_current_value() * 100.0 / self.get_max_value()
@@ -464,9 +464,8 @@ class RConObserver(Observer):
 
     def _need_update(self):
         if self.get_max_value() > 0:
-            return(self.get_percentage() -
-                (self.last_update * 100.0 / self.get_max_value())
-                >= self.pct_interval)
+            return(self.get_percentage() - (self.last_update * 100.0 / self.get_max_value())
+                   >= self.pct_interval)
         else:
             return True
 

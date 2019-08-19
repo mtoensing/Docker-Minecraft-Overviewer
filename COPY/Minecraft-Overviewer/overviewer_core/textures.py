@@ -1703,8 +1703,8 @@ def slabs(self, blockid, data):
 
     if blockid == 44 or blockid == 43:
         if texture== 0: # stone slab
-            top = self.load_image_texture("assets/minecraft/textures/block/smooth_stone.png")
-            side = self.load_image_texture("assets/minecraft/textures/block/smooth_stone_slab_side.png")
+            top = self.load_image_texture("assets/minecraft/textures/block/stone.png")
+            side = self.load_image_texture("assets/minecraft/textures/block/stone.png")
         elif texture== 1: # sandstone slab
             top = self.load_image_texture("assets/minecraft/textures/block/sandstone_top.png")
             side = self.load_image_texture("assets/minecraft/textures/block/sandstone.png")
@@ -1871,6 +1871,62 @@ def torches(self, blockid, data):
         
     return img
 
+# lantern
+@material(blockid=11373, data=[0, 1], transparent=True)
+def lantern(self, blockid, data):
+    # get the  multipart texture of the lantern
+    inputtexture = self.load_image_texture("assets/minecraft/textures/block/lantern.png")
+
+    # # now create a textures, using the parts defined in lantern.json
+
+    # JSON data for sides
+    # from": [ 5,  1,  5 ],
+    #  "to": [11,  8, 11 ],
+    # { "uv": [ 0, 2, 6,  9 ], "texture": "#all" }
+
+    side_crop = inputtexture.crop((0, 2, 6, 9))
+    side_slice = side_crop.copy()
+    side_texture = Image.new("RGBA", (16, 16), self.bgcolor)
+    side_texture.paste(side_slice,(5, 8))
+
+    # JSON data for top
+    # { "uv": [  0, 9,  6, 15 ], "texture": "#all" }
+    top_crop = inputtexture.crop((0, 9, 6, 15))
+    top_slice = top_crop.copy()
+    top_texture = Image.new("RGBA", (16, 16), self.bgcolor)
+    top_texture.paste(top_slice,(5, 5))
+
+    # mimic parts of build_full_block, to get an object smaller than a block 
+    # build_full_block(self, top, side1, side2, side3, side4, bottom=None):
+    # a non transparent block uses top, side 3 and side 4.
+    img = Image.new("RGBA", (24, 24), self.bgcolor)
+    # prepare the side textures
+    # side3
+    side3 = self.transform_image_side(side_texture)
+    # Darken this side
+    sidealpha = side3.split()[3]
+    side3 = ImageEnhance.Brightness(side3).enhance(0.9)
+    side3.putalpha(sidealpha)
+    # place the transformed texture
+    hangoff = 0
+    if data == 1:
+        hangoff = 8
+    xoff = 4
+    yoff =- hangoff
+    alpha_over(img, side3, (xoff+0, yoff+6), side3)
+    # side4
+    side4 = self.transform_image_side(side_texture)
+    side4 = side4.transpose(Image.FLIP_LEFT_RIGHT)
+    # Darken this side
+    sidealpha = side4.split()[3]
+    side4 = ImageEnhance.Brightness(side4).enhance(0.8)
+    side4.putalpha(sidealpha)
+    alpha_over(img, side4, (12-xoff, yoff+6), side4)
+    # top
+    top = self.transform_image_top(top_texture)
+    alpha_over(img, top, (0, 8-hangoff), top)
+    return img
+
 # fire
 @material(blockid=51, data=list(range(16)), transparent=True)
 def fire(self, blockid, data):
@@ -1891,9 +1947,12 @@ def fire(self, blockid, data):
 # monster spawner
 block(blockid=52, top_image="assets/minecraft/textures/block/spawner.png", transparent=True)
 
-# wooden, cobblestone, red brick, stone brick, netherbrick, sandstone, spruce, birch, jungle, quartz, red sandstone, (dark) prismarine, mossy brick and mossy cobblestone stairs.
-@material(blockid=[53,67,108,109,114,128,134,135,136,156,163,164,180,203,11337,11338,11339,
-                   11370, 11371], data=list(range(128)), transparent=True, solid=True, nospawn=True)
+# wooden, cobblestone, red brick, stone brick, netherbrick, sandstone, spruce, birch,
+# jungle, quartz, red sandstone, (dark) prismarine, mossy brick and mossy cobblestone, stone smooth_quartz
+# polished_granite polished_andesite polished_diorite granite diorite andesite end_stone_bricks red_nether_brick stairs
+@material(blockid=[53, 67, 108, 109, 114, 128, 134, 135, 136, 156, 163, 164, 180, 203, 11337, 11338, 11339,
+          11370, 11371, 11374, 11375, 11376, 11377, 11378, 11379, 11380, 11381, 11382, 11383, 11384], 
+          data=list(range(128)), transparent=True, solid=True, nospawn=True)
 def stairs(self, blockid, data):
     # preserve the upside-down bit
     upside_down = data & 0x4
@@ -1926,6 +1985,17 @@ def stairs(self, blockid, data):
         11339: "assets/minecraft/textures/block/prismarine_bricks.png",
         11370: "assets/minecraft/textures/block/mossy_stone_bricks.png",
         11371: "assets/minecraft/textures/block/mossy_cobblestone.png",
+        11374: "assets/minecraft/textures/block/sandstone_top.png",
+        11375: "assets/minecraft/textures/block/quartz_block_side.png",
+        11376: "assets/minecraft/textures/block/polished_granite.png",
+        11377: "assets/minecraft/textures/block/polished_diorite.png",
+        11378: "assets/minecraft/textures/block/polished_andesite.png",
+        11379: "assets/minecraft/textures/block/stone.png",
+        11380: "assets/minecraft/textures/block/granite.png",
+        11381: "assets/minecraft/textures/block/diorite.png",
+        11382: "assets/minecraft/textures/block/andesite.png",
+        11383: "assets/minecraft/textures/block/end_stone_bricks.png",
+        11384: "assets/minecraft/textures/block/red_nether_bricks.png",
     }
 
     texture = self.load_image_texture(stair_id_to_tex[blockid]).copy()
@@ -1936,13 +2006,16 @@ def stairs(self, blockid, data):
     inside_r = texture.copy()
 
     # sandstone, red sandstone, and quartz stairs have special top texture
-    if blockid == 128:
-        texture = self.load_image_texture("assets/minecraft/textures/block/sandstone_top.png").copy()
-    elif blockid == 156:
-        texture = self.load_image_texture("assets/minecraft/textures/block/quartz_block_top.png").copy()
-    elif blockid == 180:
-        texture = self.load_image_texture("assets/minecraft/textures/block/red_sandstone_top.png").copy()
+    special_tops = {
+        128: "assets/minecraft/textures/block/sandstone_top.png",
+        156: "assets/minecraft/textures/block/quartz_block_top.png",
+        180: "assets/minecraft/textures/block/red_sandstone_top.png",
+        11375: "assets/minecraft/textures/block/quartz_block_top.png",
+    }
 
+    if blockid in special_tops:
+        texture = self.load_image_texture(special_tops[blockid]).copy()
+ 
 
     slab_top = texture.copy()
 
@@ -2420,7 +2493,7 @@ def farmland(self, blockid, data):
 
 
 # signposts
-@material(blockid=63, data=list(range(16)), transparent=True)
+@material(blockid=[63,11401,11402,11403,11404,11405,11406], data=list(range(16)), transparent=True)
 def signpost(self, blockid, data):
 
     # first rotations
@@ -2430,8 +2503,21 @@ def signpost(self, blockid, data):
         data = (data + 8) % 16
     elif self.rotation == 3:
         data = (data + 12) % 16
-
-    texture = self.load_image_texture("assets/minecraft/textures/block/oak_planks.png").copy()
+    
+    sign_texture = {
+        # (texture on sign, texture on stick)
+        63: ("oak_planks.png", "oak_log.png"),
+        11401: ("oak_planks.png", "oak_log.png"),
+        11402: ("spruce_planks.png", "spruce_log.png"),
+        11403: ("birch_planks.png", "birch_log.png"),
+        11404: ("jungle_planks.png", "jungle_log.png"),
+        11405: ("acacia_planks.png", "acacia_log.png"),
+        11406: ("dark_oak_planks.png", "dark_oak_log.png"),
+    }
+    texture_path, texture_stick_path = ["assets/minecraft/textures/block/" + x for x in sign_texture[blockid]]
+    
+    texture = self.load_image_texture(texture_path).copy()
+    
     # cut the planks to the size of a signpost
     ImageDraw.Draw(texture).rectangle((0,12,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
 
@@ -2444,7 +2530,7 @@ def signpost(self, blockid, data):
             texture.putpixel((x,y),(0,0,0,255))
 
     # Minecraft uses wood texture for the signpost stick
-    texture_stick = self.load_image_texture("assets/minecraft/textures/block/oak_log.png")
+    texture_stick = self.load_image_texture(texture_stick_path)
     texture_stick = texture_stick.resize((12,12), Image.ANTIALIAS)
     ImageDraw.Draw(texture_stick).rectangle((2,0,12,12),outline=(0,0,0,0),fill=(0,0,0,0))
 
@@ -2666,7 +2752,7 @@ def ladder(self, blockid, data):
 
 
 # wall signs
-@material(blockid=68, data=[2, 3, 4, 5], transparent=True)
+@material(blockid=[68,11407,11408,11409,11410,11411,11412], data=[2, 3, 4, 5], transparent=True)
 def wall_sign(self, blockid, data): # wall sign
 
     # first rotations
@@ -2685,8 +2771,18 @@ def wall_sign(self, blockid, data): # wall sign
         elif data == 3: data = 5
         elif data == 4: data = 3
         elif data == 5: data = 2
-
-    texture = self.load_image_texture("assets/minecraft/textures/block/oak_planks.png").copy()
+    
+    sign_texture = {
+        68: "oak_planks.png",
+        11407: "oak_planks.png",
+        11408: "spruce_planks.png",
+        11409: "birch_planks.png",
+        11410: "jungle_planks.png",
+        11411: "acacia_planks.png",
+        11412: "dark_oak_planks.png",
+    }
+    texture_path = "assets/minecraft/textures/block/" + sign_texture[blockid]
+    texture = self.load_image_texture(texture_path).copy()
     # cut the planks to the size of a signpost
     ImageDraw.Draw(texture).rectangle((0,12,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
 
