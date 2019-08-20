@@ -1,36 +1,132 @@
 # My config.py script for overviewer:
-worlds["pudel"] = "/tmp/world/"
+worlds["pudel"] = "/tmp/world/world/"
+worlds["pudel_nether"] = "/tmp/world/world_nether/"
 texturepath = "/tmp/overviewer/client.jar"
+processes = 2
 outputdir = "/tmp/export/"
 my_cave = [Base(), EdgeLines(), Cave(only_lit=True), DepthTinting()]
 my_nowater = [Base(), EdgeLines(), NoFluids()]
 defaultzoom = 5
+my_crop = (-1200, -1600, 900, 400)
 
 def playerIcons(poi):
     if poi['id'] == 'Player':
         poi['icon'] = "https://mc.marc.tv/assets/steve.png"
         return "Last known location for %s" % poi['EntityId']
 
+def playerSpawns(poi):
+    if poi['id']=='PlayerSpawn':
+        poi['icon'] = "https://mc.marc.tv/assets/bed.png"
+        return "Spawn for %s" % poi['EntityId']
+
+def signFilter(poi):
+    if poi['id'] == 'Sign':
+        poi['icon'] = "https://mc.marc.tv/assets/sign.png"
+        return "\n".join([poi['Text1'], poi['Text2'], poi['Text3'], poi['Text4']])
+
+def chestFilter(poi):
+    if poi['id'] == 'Chest':
+        return "Chest with %d items" % len(poi['Items'])
+
+
 thingsToMaker = [
     dict(name="Players", filterFunction=playerIcons),
+    dict(name="Beds", filterFunction=playerSpawns)
 ]
 
-renders["day_normal"] = {
+renders["day_complete_smooth"] = {
     'world': 'pudel',
     'title': 'Day',
-    'rendermode': 'normal',
+    'rendermode': 'smooth_lighting',
     "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400),
     'markers': thingsToMaker
 }
 
+# Railoverlay
+renders["rails"] = {
+    'world': 'pudel',
+    'title': 'Rails',
+    "dimension": "overworld",
+    'rendermode': [ClearBase(),
+            MineralOverlay(minerals=[
+                    (66, (255,192,203)),
+                    (27, (255,192,203)),
+                    (28, (255,192,203))
+            ]), EdgeLines()],
+    "overlay": ["day_complete_smooth"],
+    'crop': my_crop,
+}
 
-renders["night_normal"] = {
+# Pistons and Observer
+renders["farms"] = {
+    'world': 'pudel',
+    'title': 'Farms',
+    "dimension": "overworld",
+    'rendermode': [ClearBase(),
+            MineralOverlay(minerals=[
+				(29, (255,192,203)),
+				(33, (255,192,203)),
+				(34, (255,192,203)),
+				(218, (255,192,203))
+			]), EdgeLines()],
+    "overlay": ["day_complete_smooth"],
+    'crop': my_crop,
+}
+
+renders["night_complete"] = {
     'world': 'pudel',
     'title': 'Night',
-    'rendermode': 'night',
+    'rendermode': 'smooth_night',
     "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400),
+    'markers': thingsToMaker
+}
+
+renders["cave_complete"] = {
+    'world': 'pudel',
+    'title': 'Cave',
+    'rendermode': my_cave,
+    "dimension": "overworld",
+    'markers': thingsToMaker
+}
+
+renders["nether"] = {
+    "world": "pudel_nether",
+    "title": "Nether",
+    "rendermode": "nether",
+    "dimension": "nether",
+    'crop': (-200, -200, 200, 200)
+}
+
+
+
+# Import the Observers
+from .observer import MultiplexingObserver, ProgressBarObserver, JSObserver
+
+# Construct the ProgressBarObserver
+pbo = ProgressBarObserver()
+
+# Construct a basic JSObserver
+jsObserver = JSObserver(outputdir, 30)
+
+# Set the observer to a MultiplexingObserver
+observer = MultiplexingObserver(pbo, jsObserver)
+
+'''
+renders["day_smooth"] = {
+    'world': 'pudel',
+    'title': 'Day',
+    'rendermode': 'smooth_lighting',
+    "dimension": "overworld",
+    'crop': my_crop,
+    'markers': thingsToMaker
+}
+
+renders["night_smooth"] = {
+    'world': 'pudel',
+    'title': 'Night',
+    'rendermode': 'smooth_night',
+    "dimension": "overworld",
+    'crop': my_crop,
     'markers': thingsToMaker
 }
 
@@ -39,58 +135,7 @@ renders["cave"] = {
     'title': 'Cave',
     'rendermode': my_cave,
     "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400),
+    'crop': my_crop,
     'markers': thingsToMaker
-}
-'''
-renders["nether"] = {
-    'world': 'pudel',
-    'title': 'Nether',
-    'rendermode': "nether",
-    "dimension": "nether",
-    'crop': (-300, -300, 300, 300),
-    'markers': thingsToMaker
-}
-
-renders["night"] = {
-    'world': 'pudel',
-    'title': 'Night',
-    'rendermode': 'smooth_night',
-    "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400),
-    'markers': thingsToMaker
-}
-
-renders["day"] = {
-    'world': 'pudel',
-    'title': 'Day',
-    'rendermode': 'smooth_lighting',
-    "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400),
-    'markers': thingsToMaker
-}
-
-renders["complete"] = {
-    'world': 'pudel',
-    'title': 'no borders',
-    'rendermode': 'normal',
-    "dimension": "overworld",
-}
-
-renders["nowater"] = {
-    'world': 'pudel',
-    'title': 'No water',
-    'rendermode': my_nowater,
-    "dimension": "overworld",
-    'crop': (-1200, -1600, 900, 400)
-}
-
-renders["day_r"] = {
-    'world': 'pudel',
-    'title': 'Day upside-down',
-    'rendermode': 'smooth_lighting',
-    "dimension": "overworld",
-    "northdirection" : "lower-right",
-    'crop': (-1200, -1600, 900, 400)
 }
 '''
