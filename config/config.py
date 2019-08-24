@@ -49,9 +49,9 @@ renders["rails"] = {
     "dimension": "overworld",
     'rendermode': [ClearBase(),
             MineralOverlay(minerals=[
-                    (66, (255,192,203)),
-                    (27, (255,192,203)),
-                    (28, (255,192,203))
+                    (66, (255,0,0)),
+                    (27, (255,0,0)),
+                    (28, (255,0,0))
             ]), EdgeLines()],
     "overlay": ["day_complete_smooth"],
     'crop': my_crop,
@@ -64,10 +64,10 @@ renders["farms"] = {
     "dimension": "overworld",
     'rendermode': [ClearBase(),
             MineralOverlay(minerals=[
-				(29, (255,192,203)),
-				(33, (255,192,203)),
-				(34, (255,192,203)),
-				(218, (255,192,203))
+				(29, (255,0,0)),
+				(33, (255,0,0)),
+				(34, (255,0,0)),
+				(218, (255,0,0))
 			]), EdgeLines()],
     "overlay": ["day_complete_smooth"],
     'crop': my_crop,
