@@ -20,18 +20,22 @@ def playerSpawns(poi):
         return "Spawn for %s" % poi['EntityId']
 
 def signFilter(poi):
-    if poi['id'] == 'Sign':
+    if poi['id'] == 'Sign' or poi['id'] == 'minecraft:sign':
         poi['icon'] = "https://mc.marc.tv/assets/sign.png"
-        return "\n".join([poi['Text1'], poi['Text2'], poi['Text3'], poi['Text4']])
+        text = "\n".join([poi['Text1'], poi['Text2'], poi['Text3'], poi['Text4']])
+        if text.__contains__('...'):
+            return text.replace('...', '')
 
 def chestFilter(poi):
-    if poi['id'] == 'Chest':
+    if poi['id'] == 'Chest' or poi['id'] == 'minecraft:chest':
         return "Chest with %d items" % len(poi['Items'])
 
 
 thingsToMaker = [
     dict(name="Players", filterFunction=playerIcons),
-    dict(name="Beds", filterFunction=playerSpawns)
+    dict(name="Beds", filterFunction=playerSpawns),
+    dict(name="Signs", filterFunction=signFilter),
+    #dict(name="Chests", filterFunction=chestFilter)
 ]
 
 renders["day_complete_smooth"] = {
@@ -40,37 +44,6 @@ renders["day_complete_smooth"] = {
     'rendermode': 'smooth_lighting',
     "dimension": "overworld",
     'markers': thingsToMaker
-}
-
-# Railoverlay
-renders["rails"] = {
-    'world': 'pudel',
-    'title': 'Rails',
-    "dimension": "overworld",
-    'rendermode': [ClearBase(),
-            MineralOverlay(minerals=[
-                    (66, (255,0,0)),
-                    (27, (255,0,0)),
-                    (28, (255,0,0))
-            ]), EdgeLines()],
-    "overlay": ["day_complete_smooth"],
-    'crop': my_crop,
-}
-
-# Pistons and Observer
-renders["farms"] = {
-    'world': 'pudel',
-    'title': 'Farms',
-    "dimension": "overworld",
-    'rendermode': [ClearBase(),
-            MineralOverlay(minerals=[
-				(29, (255,0,0)),
-				(33, (255,0,0)),
-				(34, (255,0,0)),
-				(218, (255,0,0))
-			]), EdgeLines()],
-    "overlay": ["day_complete_smooth"],
-    'crop': my_crop,
 }
 
 renders["night_complete"] = {
@@ -89,6 +62,37 @@ renders["cave_complete"] = {
     'markers': thingsToMaker
 }
 
+# Railoverlay
+renders["rails"] = {
+    'world': 'pudel',
+    'title': 'Rails',
+    "dimension": "overworld",
+    'rendermode': [ClearBase(),
+            MineralOverlay(minerals=[
+                    (66, (255,0,0)),
+                    (27, (255,0,0)),
+                    (28, (255,0,0))
+            ]), EdgeLines()],
+    "overlay": ["day_complete_smooth","night_complete","cave_complete"]
+}
+'''
+# Pistons and Observer
+renders["farms"] = {
+    'world': 'pudel',
+    'title': 'Farms',
+    "dimension": "overworld",
+    'rendermode': [ClearBase(),
+            MineralOverlay(minerals=[
+				(29, (255,0,0)),
+				(33, (255,0,0)),
+				(34, (255,0,0)),
+                (154, (255,0,0)),
+				(218, (255,0,0))
+			]), EdgeLines()],
+    "overlay": ["day_complete_smooth","night_complete","cave_complete"]
+}
+'''
+'''
 renders["nether"] = {
     "world": "pudel_nether",
     "title": "Nether",
@@ -96,8 +100,7 @@ renders["nether"] = {
     "dimension": "nether",
     'crop': (-200, -200, 200, 200)
 }
-
-
+'''
 
 # Import the Observers
 from .observer import MultiplexingObserver, ProgressBarObserver, JSObserver
