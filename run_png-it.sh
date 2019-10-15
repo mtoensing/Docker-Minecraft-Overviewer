@@ -1,6 +1,4 @@
 docker run \
   --rm \
-  -v /Users/mtoe/Documents/mcserver/:/tmp/world/:ro \
-  -v /Users/mtoe/Documents/config_test/:/tmp/config/:ro \
-  -v /Users/mtoe/Documents/export/:/tmp/export/:rw \
-  -it --entrypoint "/usr/bin/python3" marctv/minecraft-overviewer /tmp/overviewer/contrib/png-it.py --memory-limit 3000 --zoom-level 6 --autocrop --output /tmp/export/full.png /tmp/export/day/
+  -v  /volume1/docker/export/:/tmp/export/:rw \
+  -it --entrypoint "/usr/bin/python3" marctv/minecraft-overviewer /tmp/overviewer/contrib/png-it.py --memory-limit 12000 --crop 43 --zoom-level 10 --output /tmp/export/full.png /tmp/export/day_complete_smooth/
