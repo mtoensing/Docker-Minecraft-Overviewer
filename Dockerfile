@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /tmp/overviewer
 RUN git clone https://github.com/overviewer/Minecraft-Overviewer.git .
 
+# https://mcversions.net/
 ADD https://launcher.mojang.com/v1/objects/8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9/client.jar /tmp/overviewer/client.jar
 RUN chmod 775 /tmp/overviewer/client.jar
 
