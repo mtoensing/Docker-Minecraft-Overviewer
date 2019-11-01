@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /tmp/overviewer
 RUN git clone https://github.com/overviewer/Minecraft-Overviewer.git .
 RUN cp /tmp/overviewer/overviewer_core/aux_files/genPOI.py /tmp/overviewer
-ADD https://launcher.mojang.com/v1/objects/8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9/client.jar /tmp/overviewer/client.jar
+RUN wget -O client.jar https://launcher.mojang.com/v1/objects/8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9/client.jar
 RUN python3 setup.py build
 
 RUN mkdir /tmp/world
