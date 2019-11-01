@@ -10,11 +10,10 @@ RUN apt-get update && apt-get install -y \
     wget \
  && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /tmp/overviewer
 WORKDIR /tmp/overviewer
+RUN git clone https://github.com/overviewer/Minecraft-Overviewer.git .
+RUN cp /tmp/overviewer/overviewer_core/aux_files/genPOI.py /tmp/overviewer
 
-COPY COPY/Minecraft-Overviewer /tmp/overviewer
-COPY COPY/Minecraft-Overviewer/overviewer_core/aux_files/genPOI.py /tmp/overviewer
 RUN python3 setup.py build
 
 COPY COPY/client.jar /tmp/overviewer
