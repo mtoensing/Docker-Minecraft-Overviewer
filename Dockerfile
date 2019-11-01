@@ -8,18 +8,19 @@ RUN apt-get update && apt-get install -y \
     python3-numpy \
     git \
     wget \
- && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp/overviewer
 RUN git clone https://github.com/overviewer/Minecraft-Overviewer.git .
-RUN cp /tmp/overviewer/overviewer_core/aux_files/genPOI.py /tmp/overviewer
-RUN wget -O /tmp/overviewer/client.jar https://launcher.mojang.com/v1/objects/8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9/client.jar
-RUN ls -la
+
+ADD https://launcher.mojang.com/v1/objects/8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9/client.jar /tmp/overviewer/client.jar
+RUN chmod 775 /tmp/overviewer/client.jar
+
 RUN python3 setup.py build
 
-RUN mkdir /tmp/world
-RUN mkdir /tmp/export
-RUN mkdir /tmp/config
+WORKDIR /tmp/world
+WORKDIR /tmp/export
+WORKDIR /tmp/config
 
 RUN useradd -ms /bin/bash bob
 USER bob

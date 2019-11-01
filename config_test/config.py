@@ -7,7 +7,7 @@ outputdir = "/tmp/export/"
 my_cave = [Base(), EdgeLines(), Cave(only_lit=True), DepthTinting()]
 my_nowater = [Base(), EdgeLines(), NoFluids()]
 my_crop = (-300, -800, 400, -100)
-#
+
 
 def playerIcons(poi):
     if poi['id'] == 'Player':
