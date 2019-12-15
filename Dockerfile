@@ -26,4 +26,6 @@ WORKDIR /tmp/config
 RUN useradd -ms /bin/bash bob
 USER bob
 
-ENTRYPOINT ["/bin/bash", "-c","/tmp/overviewer/overviewer.py --config=/tmp/config/config.py --genpoi && /tmp/overviewer/overviewer.py --config=/tmp/config/config.py"]
+# ENTRYPOINT ["/bin/bash", "-c","/tmp/overviewer/overviewer.py --config=/tmp/config/config.py --genpoi && /tmp/overviewer/overviewer.py --config=/tmp/config/config.py"]
+# Hack to solve 1.15 bugs
+ENTRYPOINT ["/bin/bash", "-c","/tmp/overviewer/overviewer.py --config=/tmp/config/config.py"]
