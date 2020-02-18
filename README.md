@@ -1,10 +1,10 @@
-# Docker Overviewer for Minecraft 1.15.1
+# Docker Overviewer for Minecraft 1.15.2
 
 Tutorial (german) https://marc.tv/overviewer-minecraft-docker-synology/
 
 ## Example
 ```
-    docker build -t overviewer114 .
+    docker build -t overviewer115 .
     docker run \
       --rm \
       -v /Users/mtoe/Documents/mcserver/:/tmp/world/:ro \
@@ -15,7 +15,7 @@ Tutorial (german) https://marc.tv/overviewer-minecraft-docker-synology/
 
 ## Advanced example with --genpoi parameter as an environment variable
 ```
-  docker build -t marctv/overviewer113 .
+  docker build -t marctv/overviewer115 .
   docker run \
     --rm \
     -v /Users/mtoe/Documents/mcserver/:/tmp/world/:ro \
