@@ -26,4 +26,7 @@ WORKDIR /tmp/config
 RUN useradd -ms /bin/bash bob
 USER bob
 
-ENTRYPOINT ["/bin/bash", "-c","/tmp/overviewer/overviewer.py --config=/tmp/config/config.py --genpoi && /tmp/overviewer/overviewer.py --config=/tmp/config/config.py"]
+#eg. "--genpoi"
+ENV overviewerParams=""
+
+ENTRYPOINT ["/bin/bash", "-c","/tmp/overviewer/overviewer.py --config=/tmp/config/config.py ${overviewerParams}"]
