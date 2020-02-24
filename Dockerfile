@@ -29,4 +29,4 @@ USER bob
 #eg. "--genpoi"
 ENV overviewerParams=""
 
-ENTRYPOINT ["/bin/bash", "-c","/tmp/overviewer/overviewer.py --config=/tmp/config/config.py ${overviewerParams}"]
+ENTRYPOINT /tmp/overviewer/overviewer.py --config=/tmp/config/config.py ${overviewerParams}
