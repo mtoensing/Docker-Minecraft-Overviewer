@@ -1,4 +1,4 @@
-docker build marctv/minecraft-overviewer-local .
+docker build -t marctv/minecraft-overviewer-local .
 docker run \
   --rm \
   -v /Users/mtoe/Documents/mcserver/:/tmp/world/:ro \
