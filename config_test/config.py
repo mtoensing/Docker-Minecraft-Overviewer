@@ -1,7 +1,7 @@
 # My config.py script for viewer:
 
-worlds["pudel"] = "/tmp/world/world/"
-worlds["pudel_nether"] = "/tmp/world/world_nether/"
+worlds["pudel"] = "/tmp/server/world/"
+worlds["pudel_nether"] = "/tmp/server/world_nether/"
 texturepath = "/tmp/overviewer/client.jar"
 outputdir = "/tmp/export/"
 my_cave = [Base(), EdgeLines(), Cave(only_lit=True), DepthTinting()]

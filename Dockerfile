@@ -19,7 +19,7 @@ RUN chmod 775 /tmp/overviewer/client.jar
 
 RUN python3 setup.py build
 
-WORKDIR /tmp/world
+WORKDIR /tmp/server
 WORKDIR /tmp/export
 WORKDIR /tmp/config
 

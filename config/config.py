@@ -1,6 +1,6 @@
 # My config.py script for overviewer:
-worlds["pudel"] = "/tmp/world/world/"
-worlds["pudel_nether"] = "/tmp/world/world_nether/"
+worlds["pudel"] = "/tmp/server/world/"
+worlds["pudel_nether"] = "/tmp/server/world_nether/"
 texturepath = "/tmp/overviewer/client.jar"
 processes = 2
 outputdir = "/tmp/export/"
