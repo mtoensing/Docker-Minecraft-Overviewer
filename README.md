@@ -2,16 +2,28 @@
 
 Tutorial (german) https://marc.tv/overviewer-minecraft-docker-synology/
 
-## Example
+## Minimal example
 ```
     docker build -t overviewer115 .
     docker run \
       --rm \
       -v /Users/mtoe/Documents/mcserver/:/tmp/world/:ro \
-      -v /Users/mtoe/Documents/config/:/tmp/config/:ro \
       -v /Users/mtoe/Documents/export/:/tmp/export/:rw \
       -it marctv/overviewer115
 ```
+
+## User your own config
+```
+    docker build -t overviewer115 .
+    docker run \
+      --rm \
+      -v /Users/mtoe/Documents/mcserver/:/tmp/world/:ro \
+      -v config_sample/config.py:/tmp/config/:ro \
+      -v /Users/mtoe/Documents/export/:/tmp/export/:rw \
+      -it marctv/overviewer115
+```
+
+
 
 ## Advanced example with --genpoi parameter as an environment variable
 ```

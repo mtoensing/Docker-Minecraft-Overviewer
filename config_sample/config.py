@@ -1,6 +1,6 @@
 # My sample config.py script for viewer
 
-worlds["world"] = "/tmp/world/"
+worlds["world"] = "/tmp/world/world/"
 texturepath = "/tmp/overviewer/client.jar"
 outputdir = "/tmp/export/"
 
