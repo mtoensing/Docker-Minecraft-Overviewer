@@ -3,9 +3,14 @@
 Tutorial (german) https://marc.tv/overviewer-minecraft-docker-synology/
 
 ## mount volumes
-server folder: minecraft directory that contains the map folder.
-export folder: writeable folder for the export
-config file: config.py (optional) by default the config_sample/config.py file is used
+*server folder:*
+minecraft directory that contains the map folder.
+
+*export folder:* 
+writeable folder for the exported files
+
+*config file:*
+config.py (optional) by default the config_sample/config.py file is used
 
 ## minimal example
 ```
