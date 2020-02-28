@@ -9,8 +9,8 @@ minecraft directory that contains the map folder.
 *export folder:* 
 writeable folder for the exported files
 
-*config file:*
-config.py (optional) by default the config_sample/config.py file is used
+*config folder:*
+Folder with config.py (optional) by default the config_sample/config.py file is used
 
 ## minimal example
 ```
