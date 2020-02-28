@@ -26,7 +26,7 @@ config.py (optional) by default the config_sample/config.py file is used
     docker run \
       --rm \
       -v /Users/mtoe/Documents/mcserver/:/tmp/server/:ro \
-      -v config_sample/config.py:/tmp/config/:ro \
+      -v config_sample/:/tmp/config/:ro \
       -v /Users/mtoe/Documents/export/:/tmp/export/:rw \
       -it marctv/minecraft-overviewer
 ```
