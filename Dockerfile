@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /tmp/overviewer
 RUN git clone https://github.com/overviewer/Minecraft-Overviewer.git .
 
-# https://mcversions.net/ https://minecraft-de.gamepedia.com/Versionen/Vollversion_1.15 1.15.1
-ADD https://launcher.mojang.com/v1/objects/8b11614bea9293592a947ea8f4fd72981ea66677/client.jar /tmp/overviewer/client.jar
+# https://mcversions.net/download/1.15.2
+ADD https://launcher.mojang.com/v1/objects/e3f78cd16f9eb9a52307ed96ebec64241cc5b32d/client.jar /tmp/overviewer/client.jar
 RUN chmod 775 /tmp/overviewer/client.jar
 
 RUN python3 setup.py build
