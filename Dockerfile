@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp/overviewer
-RUN git clone https://github.com/overviewer/Minecraft-Overviewer.git .
+RUN git clone --progress --verbose https://github.com/overviewer/Minecraft-Overviewer.git .
 
 # https://mcversions.net/download/1.15.2
 ADD https://launcher.mojang.com/v1/objects/e3f78cd16f9eb9a52307ed96ebec64241cc5b32d/client.jar /tmp/overviewer/client.jar
