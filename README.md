@@ -2,9 +2,11 @@
 
 Tutorial (german) https://marc.tv/overviewer-minecraft-docker-synology/
 
-## How to install Overviewer on a Synology NAS
+## VIDEO: How to install Overviewer on a Synology NAS
 
 [![Watch the video](https://img.youtube.com/vi/SqufPMfZdd0/maxresdefault.jpg)](https://youtu.be/SqufPMfZdd0)
+
+https://youtu.be/SqufPMfZdd0
 
 ## mount volumes
 **server folder:** 
