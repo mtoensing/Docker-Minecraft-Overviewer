@@ -11,7 +11,7 @@ https://youtu.be/SqufPMfZdd0
 ## mount volumes
 **server folder:** 
 
-minecraft directory that contains the map folder.
+minecraft server directory that contains the map folder. 
 
 **export folder:**
 
