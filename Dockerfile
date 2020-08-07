@@ -14,7 +14,7 @@ WORKDIR /tmp/overviewer
 RUN git clone --progress --verbose https://github.com/overviewer/Minecraft-Overviewer.git .
 
 # https://mcversions.net/download/1.16.1
-ADD https://launcher.mojang.com/v1/objects/c9abbe8ee4fa490751ca70635340b7cf00db83ff/client.jar /tmp/overviewer/client.jar
+ADD https://overviewer.org/textures/latest /tmp/overviewer/client.jar
 RUN chmod 775 /tmp/overviewer/client.jar
 
 RUN python3 setup.py build
