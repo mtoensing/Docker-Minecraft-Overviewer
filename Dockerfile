@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /tmp/overviewer
 RUN git clone --progress --verbose https://github.com/overviewer/Minecraft-Overviewer.git .
 
-# https://mcversions.net/download/1.16.1
+# Alternative to https://mcversions.net/download/1.16.1
 ADD https://overviewer.org/textures/latest /tmp/overviewer/client.jar
 RUN chmod 775 /tmp/overviewer/client.jar
 
