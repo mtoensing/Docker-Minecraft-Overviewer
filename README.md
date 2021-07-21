@@ -1,4 +1,4 @@
-# Docker Overviewer for Minecraft 1.16.2
+# Docker Overviewer for Minecraft 1.17
 
 Tutorial (german) https://marc.tv/overviewer-minecraft-docker-synology/
 
