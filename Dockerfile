@@ -25,8 +25,9 @@ WORKDIR /tmp/config
 # use sample config as fallback
 ADD config_sample/config.py /tmp/config/config.py
 
-RUN useradd -ms /bin/bash bob
-USER bob
+RUN useradd -ms /bin/bash overviewer-mc
+RUN chown overviewer-mc:overviewer-mc /tmp/export
+USER overviewer-mc
 
 #eg. "--genpoi"
 ENV overviewerParams=""
