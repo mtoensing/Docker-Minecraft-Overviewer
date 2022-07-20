@@ -26,4 +26,4 @@ jobs:
       with: 
         context: .
         push: true
-        tags: marctv/minecraft-overviewer:beta
+        tags: marctv/minecraft-overviewer:latest
