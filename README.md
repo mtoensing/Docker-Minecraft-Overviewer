@@ -1,5 +1,7 @@
 # Docker Overviewer for Minecraft 1.19+
 
+Uses https://github.com/overviewer/Minecraft-Overviewer/ from overviewer.org and provides a Docker container. 
+
 Tutorial (german) https://marc.tv/overviewer-minecraft-docker-synology/
 
 ## VIDEO: How to install Overviewer on a Synology NAS
