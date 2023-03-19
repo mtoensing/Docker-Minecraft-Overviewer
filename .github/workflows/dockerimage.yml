@@ -24,7 +24,7 @@ jobs:
           user: ${{ secrets.DOCKER_HUB_USERNAME }}
           pass: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
           readme: ./README.md
-          slug: marctv/chd-converter
+          slug: marctv/minecraft-overviewer
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
